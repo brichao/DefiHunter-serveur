@@ -29,6 +29,7 @@ public class UserCRUD {
     @Autowired
     private DataSource dataSource;
 
+
     public ArrayList<User> allUsers(HttpServletResponse response) {
         @GetMapping("/")
 
@@ -55,7 +56,6 @@ public class UserCRUD {
             System.err.println(e.getMessage());
             return null;
         }
-
     }
 
     

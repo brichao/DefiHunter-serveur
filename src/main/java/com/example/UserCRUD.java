@@ -29,10 +29,8 @@ public class UserCRUD {
     @Autowired
     private DataSource dataSource;
 
-
+    @GetMapping("/")
     public ArrayList<User> allUsers(HttpServletResponse response) {
-        @GetMapping("/")
-
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM users");
@@ -57,7 +55,5 @@ public class UserCRUD {
             return null;
         }
     }
-
-    
-
+        
 }

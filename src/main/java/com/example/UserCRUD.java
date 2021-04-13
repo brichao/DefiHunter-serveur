@@ -29,5 +29,36 @@ public class UserCRUD {
     @Autowired
     private DataSource dataSource;
 
+    public ArrayList<User> allUsers(HttpServletResponse response) {
+        @GetMapping("/")
+
+        try (Connection connection = dataSource.getConnection()) {
+            Statement stmt = connection.createStatement(); 
+            ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+            
+            ArrayList<User> L = new ArrayList<User>();
+            while (rs.next()) { 
+                User u = new User();
+                u.login = rs.getString("login");
+                u.age   = rs.getInt("age");
+                L.add(u);
+            }
+            return L;
+        } catch (Exception e) {
+            response.setStatus(500);
+
+            try {
+                response.getOutputStream().print( e.getMessage() );
+            } catch (Exception e2) {
+                System.err.println(e2.getMessage());
+            }
+            System.err.println(e.getMessage());
+            return null;
+        }
+
+
+    }
+
+    
 
 }

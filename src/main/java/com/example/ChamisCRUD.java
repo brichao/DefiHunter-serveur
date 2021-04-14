@@ -74,9 +74,14 @@ public class ChamisCRUD {
                 u.login = rs.getString("login");
                 u.age   = rs.getInt("age");
             } 
-            // il faut ajouter si chamis n'existe pas donne une erreur
-            if(u.getLogin() == null) response.setStatus(404);
-            return u;
+            
+            if(u.getLogin() == null) {
+                System.out.println("Chamis does not exist : " + id );
+                response.setStatus(404);
+                return null;
+            } else {
+                return u; 
+            }
             
 
         } catch (Exception e) {
@@ -99,17 +104,24 @@ public class ChamisCRUD {
     public Chamis create(@PathVariable(value="chamisId") String id, @RequestBody Chamis u, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("INSERT INTO chamis(login, age) values ('"+ u.login + "', " + u.age + ")");
-            Chamis inseree = this.read(id, response);
             
-            return inseree;
-        } catch (Exception e) {
-            //Identifiant existe déjà
-            /*if(){
-                response.setStatus(403); 
-            } else if(!id.equals(u.login)) { //Identifiant dans l'url n'est pas le même dans le corps de la requête
+            //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
+            if( !(id.equals(u.login)) ) {
                 response.setStatus(412);
-            }*/
+                return null;
+            }
+             //une erreur 403 si une ressource existe déjà avec le même identifiant
+            if(read(id,response) == null) {
+                int rs = stmt.executeUpdate("INSERT INTO chamis(login, age) values ('"+ u.login + "', " + u.age + ")");
+                Chamis inseree = this.read(id, response);
+                return inseree;
+            }else {
+                response.setStatus(403);
+                return null;
+            
+            }
+            
+        } catch (Exception e) {
             response.setStatus(500);
             try {
                 response.getOutputStream().print( e.getMessage() );
@@ -142,6 +154,8 @@ public class ChamisCRUD {
             return null;
         }
     }
+       
+
 
     //DELETE
     @DeleteMapping("/{chamisId}")

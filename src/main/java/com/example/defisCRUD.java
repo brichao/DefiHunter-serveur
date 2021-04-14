@@ -26,8 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis")
-public class defisCRUD {
+@RequestMapping("/api/Defis")
+public class DefisCRUD {
     
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
@@ -35,14 +35,14 @@ public class defisCRUD {
 
     //GET READ ALL
     @GetMapping("/")
-    public ArrayList<defis> alldefis(HttpServletResponse response) {
+    public ArrayList<Defis> alldefis(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM defis");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Defis");
             
-            ArrayList<defis> L = new ArrayList<defis>();
+            ArrayList<Defis> L = new ArrayList<Defis>();
             while (rs.next()) { 
-                defis d = new defis();
+                Defis d = new Defis();
                 d.id = rs.getString("id");
                 d.titre   = rs.getString("titre");
                 d.datedecreation = rs.getTimestamp("datedecreation");
@@ -65,13 +65,13 @@ public class defisCRUD {
     }
 
     //GET READ 
-    @GetMapping("/{defisId}")
-    public defis read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
+    @GetMapping("/{DefisId}")
+    public Defis read(@PathVariable(value="DefisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM defis where id = '" + id + "'");
             
-            defis d = new defis();
+            Defis d = new Defis();
             while (rs.next()) { 
                 d.id = rs.getString("id");
                 d.titre   = rs.getString("titre");
@@ -96,25 +96,18 @@ public class defisCRUD {
         
     }
 
-
     //CREATE -- POST /api/defis/{defisID}
-    @PostMapping("/{defisId}")
-    public defis create(@PathVariable(value="defisId") String id, @RequestBody defis u, HttpServletResponse response){
+    @PostMapping("/{DefisId}")
+    public Defis create(@PathVariable(value="DefisId") String id, @RequestBody Defis d, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             int rs = stmt.executeUpdate("INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
-                                        + "values ('"+ u.id + "', '" + u.titre + 
-                                            "', now(), '" + u.description + "', '" + u.auteur + "')");
-            defis inseree = this.read(id, response);
+                                        + "values ('"+ d.id + "', '" + d.titre + 
+                                            "', now(), '" + d.description + "', '" + d.auteur + "')");
+            Defis inseree = this.read(id, response);
             
             return inseree;
         } catch (Exception e) {
-            //Identifiant existe déjà
-            /*if(){
-                response.setStatus(403); 
-            } else if(!id.equals(u.login)) { //Identifiant dans l'url n'est pas le même dans le corps de la requête
-                response.setStatus(412);
-            }*/
             response.setStatus(500);
             try {
                 response.getOutputStream().print( e.getMessage() );
@@ -129,13 +122,13 @@ public class defisCRUD {
     
     //PUT UPDATE 
     @PutMapping("/{defisId}")
-    public defis update(@PathVariable(value="defisId") String id, @RequestBody defis u, HttpServletResponse response) {
+    public Defis update(@PathVariable(value="defisId") String id, @RequestBody Defis d, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("UPDATE defis set id='" + u.id + "', titre='" + u.titre + "', datedecreation='" + u.datedecreation + 
-            "', description='" + u.description + "', auteur='" + u.auteur + "' WHERE id = '" + id + "'");
+            int rs = stmt.executeUpdate("UPDATE defis set id='" + d.id + "', titre='" + d.titre + "', datedecreation='" + d.datedecreation + 
+            "', description='" + d.description + "', auteur='" + d.auteur + "' WHERE id = '" + id + "'");
 
-            return u;
+            return d;
         } catch (Exception e) {
             response.setStatus(500);
 
@@ -149,10 +142,9 @@ public class defisCRUD {
         }
     }
 
-
     //DELETE
-    @DeleteMapping("/{defisId}")
-    public void delete(@PathVariable(value="defisId") String id, HttpServletResponse response) {
+    @DeleteMapping("/{DefisId}")
+    public void delete(@PathVariable(value="DefisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             int rs = stmt.executeUpdate("DELETE FROM defis WHERE id = '"+id+"'");
@@ -172,5 +164,3 @@ public class defisCRUD {
     }
 
 }
-    
-

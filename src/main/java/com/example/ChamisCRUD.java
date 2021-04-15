@@ -107,6 +107,7 @@ public class ChamisCRUD {
             
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
             if( !(id.equals(u.getPseudo())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getPseudo());
                 response.setStatus(412);
                 return null;
             }
@@ -116,6 +117,7 @@ public class ChamisCRUD {
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }else {
+                System.out.println("Chamis already exist: " + id );
                 response.setStatus(403);
                 return null;
             
@@ -149,6 +151,7 @@ public class ChamisCRUD {
 
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
             else if( !(id.equals(u.getPseudo())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getPseudo());
                 response.setStatus(412);
                 return null;
             }
@@ -178,8 +181,9 @@ public class ChamisCRUD {
     public void delete(@PathVariable(value="chamisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM chamis WHERE login = '"+id+"'");
+            int rs = stmt.executeUpdate("DELETE FROM chamis WHERE pseudo = '"+id+"'");
             if(rs == 0){
+                System.out.println("Chamis does not exist : " + id );
                 response.setStatus(404);
             }
         } catch (Exception e) {

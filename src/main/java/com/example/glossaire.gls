@@ -8,9 +8,9 @@
 glossary model CyberChamis
 
 
-
 Chamis
-    synonyms : pseudo
+    synonyms : personne
+    | Les `Chamis`  sont toujours anonymes, c’est-à-dire que les `Chamis` ne connaissent pas l'identité des autres chamis. 
 
 CyberChamis
     | Logicel pour le compte de la communauté des `Chamis` et pour le compte de l'association `GreCha` dont le but est de réaliser
@@ -20,7 +20,8 @@ GreCha
     | Une association dont le but est de faire visiter la ville à des membres de la communauté `Chamis` en effectuant des `Defi`s.
 
 Defi
-    inflections : Defis
+    | inflections : Defis
+    | les défis sont essentiellement des descriptions textuelles
 
 
 Visiteur

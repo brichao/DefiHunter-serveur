@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/Defis")
+@RequestMapping("/api/defis")
 public class DefisCRUD {
     
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
@@ -65,8 +65,8 @@ public class DefisCRUD {
     }
 
     //GET READ 
-    @GetMapping("/{DefisId}")
-    public Defis read(@PathVariable(value="DefisId") String id, HttpServletResponse response) {
+    @GetMapping("/{defisId}")
+    public Defis read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM defis where id = '" + id + "'");
@@ -78,9 +78,15 @@ public class DefisCRUD {
                 d.datedecreation = rs.getTimestamp("datedecreation");
                 d.description = rs.getString("description");
                 d.auteur = rs.getString("auteur");
-            } 
-            return d;
-
+            }
+            //is non existant error 404
+            if(d.getId() == null) {
+                System.out.println("Defis does not exist : " + id );
+                response.setStatus(404);
+                return null;
+            } else {
+                return d; 
+            }
 
         } catch (Exception e) {
             response.setStatus(500);
@@ -97,16 +103,29 @@ public class DefisCRUD {
     }
 
     //CREATE -- POST /api/defis/{defisID}
-    @PostMapping("/{DefisId}")
-    public Defis create(@PathVariable(value="DefisId") String id, @RequestBody Defis d, HttpServletResponse response){
+    @PostMapping("/{defisId}")
+    public Defis create(@PathVariable(value="defisId") String id, @RequestBody Defis d, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
+            
+            //une erreur 412 si l'identifiant du defis dans l'URL n'est pas le même que celui du defis dans le corp de la requête.
+            if( !(id.equals(d.id)) ) {
+                response.setStatus(412);
+                return null;
+            }
+             //une erreur 403 si une ressource existe déjà avec le même identifiant
+            if(read(id,response) == null) {
+               int rs = stmt.executeUpdate("INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
                                         + "values ('"+ d.id + "', '" + d.titre + 
                                             "', now(), '" + d.description + "', '" + d.auteur + "')");
             Defis inseree = this.read(id, response);
             
             return inseree;
+            }else {
+                response.setStatus(403);
+                return null;
+            
+            }
         } catch (Exception e) {
             response.setStatus(500);
             try {
@@ -125,10 +144,23 @@ public class DefisCRUD {
     public Defis update(@PathVariable(value="defisId") String id, @RequestBody Defis d, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("UPDATE defis set id='" + d.id + "', titre='" + d.titre + "', datedecreation='" + d.datedecreation + 
+            
+             //une erreur 412 si l'identifiant du defis dans l'URL n'est pas le même que celui du defis dans le corp de la requête.
+            if( !(id.equals(d.id)) ) {
+                response.setStatus(412);
+                return null;
+            }
+           //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
+            if(!(read(id,response)== null)) {
+                 int rs = stmt.executeUpdate("UPDATE defis set id='" + d.id + "', titre='" + d.titre + "', datedecreation='" + d.datedecreation + 
             "', description='" + d.description + "', auteur='" + d.auteur + "' WHERE id = '" + id + "'");
-
             return d;
+            
+            }else {
+                response.setStatus(404);
+                return null;
+            
+            }
         } catch (Exception e) {
             response.setStatus(500);
 
@@ -143,14 +175,18 @@ public class DefisCRUD {
     }
 
     //DELETE
-    @DeleteMapping("/{DefisId}")
-    public void delete(@PathVariable(value="DefisId") String id, HttpServletResponse response) {
+    @DeleteMapping("/{defisId}")
+    public void delete(@PathVariable(value="defisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM defis WHERE id = '"+id+"'");
-            if(rs == 0){
+            
+           //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
+            if(!(read(id,response)== null)) {
+                int rs = stmt.executeUpdate("DELETE FROM defis WHERE id = '"+id+"'");
+            
+            }else {
                 response.setStatus(404);
-            }
+                }
         } catch (Exception e) {
             response.setStatus(500);
 

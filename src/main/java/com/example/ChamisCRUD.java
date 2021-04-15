@@ -139,9 +139,25 @@ public class ChamisCRUD {
     public Chamis update(@PathVariable(value="chamisId") String id, @RequestBody Chamis u, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("UPDATE chamis SET login ='"+u.login+"', age="+u.age+" WHERE login = '"+id+"'");
+           
+        //Si Chamis n'existe pas, erreur 404
+         if(u.getLogin() == null) {
+                System.out.println("Chamis does not exist : " + id );
+                response.setStatus(404);
+                return null;
+            } 
 
-            return u;
+        //Identifiant du Chami n'est pas le même que sur l'URL, erreur 412
+            else if( !(id.equals(u.login)) ) {
+                response.setStatus(412);
+                return null;
+            }
+            
+            else {
+                int rs = stmt.executeUpdate("UPDATE chamis SET login ='"+u.login+"', age="+u.age+" WHERE login = '"+id+"'");
+                Chamis inseree = this.read(id, response);
+                return inseree;
+            } 
         } catch (Exception e) {
             response.setStatus(500);
 
@@ -152,18 +168,19 @@ public class ChamisCRUD {
             }
             System.err.println(e.getMessage());
             return null;
-        }
+        } 
     }
+
        
-
-
     //DELETE
     @DeleteMapping("/{chamisId}")
     public void delete(@PathVariable(value="chamisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
+            //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
+            if(!(read(id,response)== null)) {
             int rs = stmt.executeUpdate("DELETE FROM chamis WHERE login = '"+id+"'");
-            if(rs == 0){
+            }else {
                 response.setStatus(404);
             }
         } catch (Exception e) {

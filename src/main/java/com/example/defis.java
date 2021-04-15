@@ -3,11 +3,11 @@ package com.example;
 import java.sql.Timestamp;
 
 public class Defis {
-    public String id;
-    public String titre;
-    public Timestamp datedecreation;
-    public String description;
-    public String auteur;
+    private String id;
+    private String titre;
+    private Timestamp datedecreation;
+    private String description;
+    private String auteur;
 
      public String getId() {
         return id;

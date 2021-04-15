@@ -43,8 +43,8 @@ public class ChamisCRUD {
             ArrayList<Chamis> L = new ArrayList<Chamis>();
             while (rs.next()) { 
                 Chamis u = new Chamis();
-                u.login = rs.getString("login");
-                u.age   = rs.getInt("age");
+                u.setPseudo(rs.getString("pseudo"));
+                u.setAge(rs.getInt("age"));
                 L.add(u);
             } 
             return L;
@@ -67,15 +67,15 @@ public class ChamisCRUD {
     public Chamis read(@PathVariable(value="chamisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM chamis where login = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM chamis where pseudo = '" + id + "'");
             
             Chamis u = new Chamis();
             while (rs.next()) { 
-                u.login = rs.getString("login");
-                u.age   = rs.getInt("age");
+                u.setPseudo(rs.getString("pseudo"));
+                u.setAge(rs.getInt("age"));
             } 
             
-            if(u.getLogin() == null) {
+            if(u.getPseudo() == null) {
                 System.out.println("Chamis does not exist : " + id );
                 response.setStatus(404);
                 return null;
@@ -106,13 +106,13 @@ public class ChamisCRUD {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            if( !(id.equals(u.login)) ) {
+            if( !(id.equals(u.getPseudo())) ) {
                 response.setStatus(412);
                 return null;
             }
-             //une erreur 403 si une ressource existe déjà avec le même identifiant
+             //une erreur 403 si un chamis existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO chamis(login, age) values ('"+ u.login + "', " + u.age + ")");
+                int rs = stmt.executeUpdate("INSERT INTO chamis(pseudo, age) values ('"+ u.getPseudo() + "', " + u.getAge() + ")");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -139,25 +139,43 @@ public class ChamisCRUD {
     public Chamis update(@PathVariable(value="chamisId") String id, @RequestBody Chamis u, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
+<<<<<<< HEAD
            
         //Si Chamis n'existe pas, erreur 404
-         if(u.getLogin() == null) {
+         if(u.getPseudo() == null) {
                 System.out.println("Chamis does not exist : " + id );
                 response.setStatus(404);
                 return null;
             } 
 
         //Identifiant du Chami n'est pas le même que sur l'URL, erreur 412
-            else if( !(id.equals(u.login)) ) {
+            else if( !(id.equals(u.getPseudo())) ) {
                 response.setStatus(412);
                 return null;
             }
             
             else {
-                int rs = stmt.executeUpdate("UPDATE chamis SET login ='"+u.login+"', age="+u.age+" WHERE login = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"', age="+u.getAge()+" WHERE pseudo = '"+id+"'");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             } 
+
+
+            //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
+            if( !(id.equals(u.getPseudo())) ) {
+                response.setStatus(412);
+                return null;
+            }
+            // Une erreur 404 si l'identifiant de l'utilisateur ne correspond pas à un utilisateur dans la base. 
+            if(read(id,response) != null) {
+                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"', age="+u.getAge()+" WHERE pseudo = '"+id+"'");
+                return u;
+            } else {
+                response.setStatus(404);
+                return null;
+            }
+            
+
         } catch (Exception e) {
             response.setStatus(500);
 
@@ -177,10 +195,15 @@ public class ChamisCRUD {
     public void delete(@PathVariable(value="chamisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
+
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
             if(!(read(id,response)== null)) {
-            int rs = stmt.executeUpdate("DELETE FROM chamis WHERE login = '"+id+"'");
+            int rs = stmt.executeUpdate("DELETE FROM chamis WHERE pseudo = '"+id+"'");
             }else {
+
+            int rs = stmt.executeUpdate("DELETE FROM chamis WHERE pseudo = '"+id+"'");
+            if(rs == 0){
+
                 response.setStatus(404);
             }
         } catch (Exception e) {

@@ -1,16 +1,16 @@
 package com.example;
 
 public class Chamis {
-    public String login;
-    public int age;
+    private String pseudo;
+    private int age;
 
-    public String getLogin() {
-        return login;
+    public String getPseudo() {
+        return pseudo;
     }
-
-    public void setLogin(String login) {
-        this.login = login;
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
+    
     public int getAge(){
         return age;
     }

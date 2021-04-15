@@ -110,6 +110,7 @@ public class DefisCRUD {
             
             //une erreur 412 si l'identifiant du defis dans l'URL n'est pas le même que celui du defis dans le corp de la requête.
             if( !(id.equals(d.getId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + d.getId());
                 response.setStatus(412);
                 return null;
             }
@@ -122,6 +123,7 @@ public class DefisCRUD {
             
             return inseree;
             }else {
+                System.out.println("Defis already exist: " + id );
                 response.setStatus(403);
                 return null;
             
@@ -147,6 +149,7 @@ public class DefisCRUD {
             
              //une erreur 412 si l'identifiant du defis dans l'URL n'est pas le même que celui du defis dans le corp de la requête.
             if( !(id.equals(d.getId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + d.getId());
                 response.setStatus(412);
                 return null;
             }
@@ -157,6 +160,7 @@ public class DefisCRUD {
             return d;
             
             }else {
+                System.out.println("Defis does not exist : " + id );
                 response.setStatus(404);
                 return null;
             
@@ -185,6 +189,7 @@ public class DefisCRUD {
                 int rs = stmt.executeUpdate("DELETE FROM defis WHERE id = '"+id+"'");
             
             }else {
+                System.out.println("Defis does not exist : " + id );
                 response.setStatus(404);
                 }
         } catch (Exception e) {

@@ -43,11 +43,11 @@ public class DefisCRUD {
             ArrayList<Defis> L = new ArrayList<Defis>();
             while (rs.next()) { 
                 Defis d = new Defis();
-                d.id = rs.getString("id");
-                d.titre   = rs.getString("titre");
-                d.datedecreation = rs.getTimestamp("datedecreation");
-                d.description = rs.getString("description");
-                d.auteur = rs.getString("auteur");
+                d.setId(rs.getString("id"));
+                d.setTitre(rs.getString("titre"));
+                d.setDatedecreation(rs.getTimestamp("datedecreation"));
+                d.setDescription(rs.getString("description"));
+                d.setAuteur(rs.getString("auteur"));
                 L.add(d);
             } 
             return L;
@@ -73,11 +73,11 @@ public class DefisCRUD {
             
             Defis d = new Defis();
             while (rs.next()) { 
-                d.id = rs.getString("id");
-                d.titre   = rs.getString("titre");
-                d.datedecreation = rs.getTimestamp("datedecreation");
-                d.description = rs.getString("description");
-                d.auteur = rs.getString("auteur");
+                d.setId(rs.getString("id"));
+                d.setTitre(rs.getString("titre"));
+                d.setDatedecreation(rs.getTimestamp("datedecreation"));
+                d.setDescription(rs.getString("description"));
+                d.setAuteur(rs.getString("auteur"));
             } 
             return d;
 
@@ -101,12 +101,24 @@ public class DefisCRUD {
     public Defis create(@PathVariable(value="DefisId") String id, @RequestBody Defis d, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
-                                        + "values ('"+ d.id + "', '" + d.titre + 
-                                            "', now(), '" + d.description + "', '" + d.auteur + "')");
-            Defis inseree = this.read(id, response);
+
+            //une erreur 412 si l'identifiant du défi dans l'URL n'est pas le même que celui du défi dans le corp de la requête.
+            if( !(id.equals(d.getId()) )) {
+                response.setStatus(412);
+                return null;
+            }
+             //une erreur 403 si un défi existe déjà avec le même identifiant
+            if(read(id,response) == null) {
+                int rs = stmt.executeUpdate("INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
+                                                + "values ('"+ d.getId() + "', '" + d.getTitre() + 
+                                                    "', now(), '" + d.getDescription() + "', '" + d.getAuteur() + "')");
+                Defis inseree = this.read(id, response);
+                return inseree;
+            }else {
+                response.setStatus(403);
+                return null;
             
-            return inseree;
+            }
         } catch (Exception e) {
             response.setStatus(500);
             try {
@@ -125,10 +137,22 @@ public class DefisCRUD {
     public Defis update(@PathVariable(value="defisId") String id, @RequestBody Defis d, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("UPDATE defis set id='" + d.id + "', titre='" + d.titre + "', datedecreation='" + d.datedecreation + 
-            "', description='" + d.description + "', auteur='" + d.auteur + "' WHERE id = '" + id + "'");
 
-            return d;
+            //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
+            if( !(id.equals(d.getId())) ) {
+                response.setStatus(412);
+                return null;
+            }
+            // Une erreur 404 si l'identifiant de l'utilisateur ne correspond pas à un utilisateur dans la base. 
+            if(read(id,response) != null) {
+                int rs = stmt.executeUpdate("UPDATE defis set id='" + d.getId() + "', titre='" + d.getTitre() + "', datedecreation='" + d.getDatedecreation() + 
+            "', description='" + d.getDescription() + "', auteur='" + d.getAuteur() + "' WHERE id = '" + id + "'");
+                return d;
+            } else {
+                response.setStatus(404);
+                return null;
+            }
+
         } catch (Exception e) {
             response.setStatus(500);
 

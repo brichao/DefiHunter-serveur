@@ -1,0 +1,33 @@
+//=========================================================================
+//                      Modèle de glossaire
+//-------------------------------------------------------------------------
+// Ce modèle de glossaire est exprimé en GlossaryScript
+// voir https://modelscript.readthedocs.io/en/latest/languages/glossaries/index.html
+//=========================================================================
+
+glossary model CyberChamis
+
+
+
+Chamis
+    synonyms : pseudo
+
+CyberChamis
+    | Logicel pour le compte de la communauté des `Chamis` et pour le compte de l'association `GreCha` dont le but est de réaliser
+    | des `Defi`s dans la ville de Grenoble.
+
+GreCha
+    | Une association dont dont le but est de faire visiter la ville à des membres de la communauté `Chamis` en effectuant des `Defi`s.
+
+Defi
+    inflections : Defis
+
+
+Visiteur
+    | Un `Visiteur` est une personne qui effectue un `Defi`.
+
+Auteur
+    | Un `Auteur` est une personne membre de la communauté `Chamis` qui crée des `Defi`s.
+
+Carte
+    | La `Carte` est un outil de représentation géographique de la ville où sont effectués les `Defi`s.

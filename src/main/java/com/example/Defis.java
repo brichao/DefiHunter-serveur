@@ -3,16 +3,23 @@ package com.example;
 import java.sql.Timestamp;
 
 public class Defis {
-    private String id;
-    private String titre;
-    private Timestamp datedecreation;
-    private String auteur;
-    private String arret;
-    private String motCles;
-    private int points; 
-    private int duree;
-    private String description;
-    private String epilogue;
+    public String id; 
+    public String defi; 
+    public String titre;  
+    public String Type;  
+    public String auteur;  
+    public Timestamp datedecreation;  
+    public Timestamp datedemodification;   
+    public int Version; 
+    public String arret;
+    public String code_arret;
+    public String motscle;
+    public int Points;
+    public String duree;
+    public String description; 
+    public String Prologue;
+    public String Epilogue;
+    public String commentaire;
 
     public String getId() {
         return id;
@@ -34,25 +41,53 @@ public class Defis {
         return auteur;
     }
 
-    public String getArret() {
+    public String getdefi(){
+        return defi;
+    }
+
+    public String getType(){
+        return Type;
+    }
+
+    public Timestamp getdatedemodification(){
+        return datedemodification;
+    }
+
+    public int getVersion(){
+        return Version;
+    }
+
+    public String getarret(){
         return arret;
     }
 
-    public String getMotCles() {
-        return motCles;
-    }
-    public int getPoints() {
-        return points;
+    public String getcode_arret(){
+        return code_arret;
     }
 
-    public int getDuree() {
+    public String getmotscle(){
+        return motscle;
+    }
+
+    public int getPoints(){
+        return Points;
+    }
+
+    public String getduree(){
         return duree;
     }
 
-    public String getEpilogue() {
-        return epilogue;
+    public String getPrologue(){
+        return Prologue;
     }
-    
+
+    public String getEpilogue(){
+        return Epilogue;
+    }
+
+    public String getcommentaire(){
+        return commentaire;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -74,23 +109,55 @@ public class Defis {
         this.auteur = auteur;
     }
 
-    public void setArret(String arret) {
+    public void setdefi (String defi) {
+        this.defi = defi;
+    }
+
+    public void settype (String Type){
+        this.Type = Type;
+    }
+
+    public void setdatedemodification (Timestamp datedemodification){
+        this.datedemodification = datedemodification;
+    }
+
+    public void setVersion (int Version){
+        this.Version = Version;
+    }
+
+    public void setarret (String arret){
         this.arret = arret;
     }
 
-    public void setMotCles(String motCles) {
-        this.motCles = motCles;
+    public void setcodearret (String code_arret){
+        this.code_arret = code_arret;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void setmotscle (String motscle){
+        this.motscle = motscle;
     }
 
-    public void setDuree(int duree) {
+    public void setpoints (int Points){
+        this.Points = Points;
+    }
+
+    public void setduree (String duree) {
         this.duree = duree;
     }
 
-    public void setEpilogue(String epilogue) {
-        this.epilogue = epilogue;
+    public void setdescription (String description){
+        this.description = description;
+    }
+
+    public void setprologue (String Prologue){
+        this.Prologue = Prologue;
+    }
+
+    public void setEpilogue (String Epilogue){
+        this.Epilogue = Epilogue; 
+    }
+
+    public void setCommentaire (String commentaire){
+        this.commentaire = commentaire;
     }
 }

@@ -115,14 +115,13 @@ public class ChamisCRUD {
             }
              //une erreur 403 si un chamis existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO chamis(pseudo, age) values ('"+ u.getPseudo() + "', " + u.getAge() + ")");
+                int rs = stmt.executeUpdate("INSERT INTO chamis(pseudo, age) values ('"+ u.getPseudo() + "', " + u.getAge() + "', " + u.getVille() + "', " + u.getDescription() + ")");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }else {
                 System.out.println("Chamis already exist: " + id );
                 response.setStatus(403);
                 return null;
-            
             }
             
         } catch (Exception e) {
@@ -157,7 +156,7 @@ public class ChamisCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"', age="+u.getAge()+" WHERE pseudo = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"', age="+u.getAge()+"', ville="+u.getVille()+"', description="+u.getDescription()+" WHERE pseudo = '"+id+"'");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }   

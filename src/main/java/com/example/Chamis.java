@@ -3,6 +3,8 @@ package com.example;
 public class Chamis {
     private String pseudo;
     private int age;
+    private String ville;
+	private String description;
 
     public String getPseudo() {
         return pseudo;
@@ -16,6 +18,20 @@ public class Chamis {
     }
     public void setAge(int age){
         this.age=age;
+    }
+
+    public String getVille() {
+        return ville;
+    }
+    public void setVille(String ville) {
+        this.ville = ville;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

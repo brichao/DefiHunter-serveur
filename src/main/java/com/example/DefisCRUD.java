@@ -120,9 +120,11 @@ public class DefisCRUD {
 
             //une erreur 403 si une ressource existe déjà avec le même identifiant
             if(read(id,response) == null) {
-               int rs = stmt.executeUpdate( "INSERT INTO defis(id, titre, datedecreation, description, auteur)" 
+               int rs = stmt.executeUpdate( "INSERT INTO defis(id, titre, datedecreation, auteur, arret, motcles, points, duree, description, epilogue)" 
                                             + "values ('"+ d.getId() + "', '" + d.getTitre() + "', now(), '" 
-                                            + d.getDescription() + "', '" + d.getAuteur() + "')" );
+                                            + d.getAuteur() + "', '" + d.getArret() + "', '" + d.getMotCles() + "', '" 
+                                            + d.getPoints() + "', '" + d.getDuree() + "', '" + d.getDescription() + "', '"   
+                                            + d.getEpilogue() + "')" );
             Defis inseree = this.read(id, response);
             
             return inseree;
@@ -160,9 +162,10 @@ public class DefisCRUD {
 
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
             if(!(read(id,response)== null)) {
-                 int rs = stmt.executeUpdate("UPDATE defis set id='" + d.getId() + "', titre='" + d.getTitre() 
-                                            + "', datedecreation='" + d.getDatedecreation() + "', description='" + d.getDescription() 
-                                            + "', auteur='" + d.getAuteur() + "' WHERE id = '" + id + "'");
+                int rs = stmt.executeUpdate("UPDATE defis set id='" + d.getId() + "', titre='" + d.getTitre() 
+                                            + "', datedecreation='" + d.getDatedecreation() + "', auteur='" + d.getAuteur() 
+                                            + "', arret='" + d.getArret()  + "', motcles='" + d.getMotCles()  + "', points='" + d.getPoints() 
+                                            + "', description='" + d.getDescription() + "', epilogue='" + d.getEpilogue()+ "' WHERE id = '" + id + "'");
                 return d;
             }else {
                 System.out.println("Defis does not exist : " + id );

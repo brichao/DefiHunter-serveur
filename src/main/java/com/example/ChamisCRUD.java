@@ -45,7 +45,10 @@ public class ChamisCRUD {
             while (rs.next()) { 
                 Chamis u = new Chamis();
                 u.setPseudo(rs.getString("pseudo"));
+                u.setEmail(rs.getString("email"));
                 u.setAge(rs.getInt("age"));
+                u.setVille(rs.getString("ville"));
+                u.setDescription(rs.getString("description"));
                 L.add(u);
             } 
             return L;
@@ -73,7 +76,10 @@ public class ChamisCRUD {
             Chamis u = new Chamis();
             while (rs.next()) { 
                 u.setPseudo(rs.getString("pseudo"));
+                u.setEmail(rs.getString("email"));
                 u.setAge(rs.getInt("age"));
+                u.setVille(rs.getString("ville"));
+                u.setDescription(rs.getString("description"));
             }
 
             // Une erreur 404 si l'identifiant de l'utilisateur ne correspond pas à un utilisateur dans la base.
@@ -115,7 +121,7 @@ public class ChamisCRUD {
             }
              //une erreur 403 si un chamis existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO chamis(pseudo, age) values ('"+ u.getPseudo() + "', " + u.getAge() + "', " + u.getVille() + "', " + u.getDescription() + ")");
+                int rs = stmt.executeUpdate("INSERT INTO chamis values ('"+ u.getPseudo() + "', '"+ u.getEmail() + "'," + u.getAge() + ", '" + u.getVille() + "', '" + u.getDescription() + "')");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -156,7 +162,7 @@ public class ChamisCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"', age="+u.getAge()+"', ville="+u.getVille()+"', description="+u.getDescription()+" WHERE pseudo = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"',email='"+u.getEmail()+"', age="+u.getAge()+", ville='"+u.getVille()+"', description='"+u.getDescription()+"' WHERE pseudo = '"+id+"'");
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }   

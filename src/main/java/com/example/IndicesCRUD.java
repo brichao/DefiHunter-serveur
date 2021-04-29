@@ -69,7 +69,7 @@ public class IndicesCRUD {
     public Indices read(@PathVariable(value="indicesId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM lesindices where lebeli = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM indices where lebeli = '" + id + "'");
             
             Indices u = new Indices();
             while (rs.next()) {

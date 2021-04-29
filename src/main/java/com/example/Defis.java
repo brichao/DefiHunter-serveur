@@ -3,91 +3,18 @@ package com.example;
 import java.sql.Timestamp;
 
 public class Defis {
-    public String id; 
-    public String defi; 
-    public String titre;  
-    public String Type;  
-    public String auteur;  
-    public Timestamp datedecreation;  
-    public Timestamp datedemodification;   
-    public int Version; 
-    public String arret;
-    public String code_arret;
-    public String motscle;
-    public int Points;
-    public String duree;
-    public String description; 
-    public String Prologue;
-    public String Epilogue;
-    public String commentaire;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getTitre() {
-        return titre;
-    }
-
-    public Timestamp getDatedecreation() {
-        return datedecreation;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getAuteur() {
-        return auteur;
-    }
-
-    public String getdefi(){
-        return defi;
-    }
-
-    public String getType(){
-        return Type;
-    }
-
-    public Timestamp getdatedemodification(){
-        return datedemodification;
-    }
-
-    public int getVersion(){
-        return Version;
-    }
-
-    public String getarret(){
-        return arret;
-    }
-
-    public String getcode_arret(){
-        return code_arret;
-    }
-
-    public String getmotscle(){
-        return motscle;
-    }
-
-    public int getPoints(){
-        return Points;
-    }
-
-    public String getduree(){
-        return duree;
-    }
-
-    public String getPrologue(){
-        return Prologue;
-    }
-
-    public String getEpilogue(){
-        return Epilogue;
-    }
-
-    public String getcommentaire(){
-        return commentaire;
-    }
+    private String id; 
+    private String titre; 
+    private int idType; 
+    private Timestamp dateCreation;  
+    private Timestamp dateModification; 
+    private String auteur;   
+    private String codeArret;
+    private int points;
+    private String duree;
+    private String prologue;
+    private String epilogue;
+    private String commentaire ;
 
     public void setId(String id) {
         this.id = id;
@@ -97,67 +24,93 @@ public class Defis {
         this.titre = titre;
     }
 
-    public void setDatedecreation(Timestamp datedecreation) {
-        this.datedecreation = datedecreation;
+    public void setIdType(int idType) {
+        this.idType = idType;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDateCreation(Timestamp dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public void setDateModification(Timestamp dateModification) {
+        this.dateModification = dateModification;
     }
 
     public void setAuteur(String auteur) {
         this.auteur = auteur;
     }
 
-    public void setdefi (String defi) {
-        this.defi = defi;
+    public void setCodeArret(String codeArret) {
+        this.codeArret = codeArret;
     }
 
-    public void settype (String Type){
-        this.Type = Type;
+    public void setPoints(int points) {
+        this.points = points;
     }
 
-    public void setdatedemodification (Timestamp datedemodification){
-        this.datedemodification = datedemodification;
-    }
-
-    public void setVersion (int Version){
-        this.Version = Version;
-    }
-
-    public void setarret (String arret){
-        this.arret = arret;
-    }
-
-    public void setcodearret (String code_arret){
-        this.code_arret = code_arret;
-    }
-
-    public void setmotscle (String motscle){
-        this.motscle = motscle;
-    }
-
-    public void setpoints (int Points){
-        this.Points = Points;
-    }
-
-    public void setduree (String duree) {
+    public void setDuree(String duree) {
         this.duree = duree;
     }
 
-    public void setdescription (String description){
-        this.description = description;
+    public void setPrologue(String prologue) {
+        this.prologue = prologue;
     }
 
-    public void setprologue (String Prologue){
-        this.Prologue = Prologue;
+    public void setEpilogue(String epilogue) {
+        this.epilogue = epilogue;
     }
 
-    public void setEpilogue (String Epilogue){
-        this.Epilogue = Epilogue; 
-    }
-
-    public void setCommentaire (String commentaire){
+    public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
     }
+    
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public int getIdType() {
+        return idType;
+    }
+
+    public Timestamp getDateCreation() {
+        return dateCreation;
+    }
+
+    public Timestamp getDateModification() {
+        return dateModification;
+    }
+
+    public String getAuteur() {
+        return auteur;
+    }
+
+    public String getCodeArret() {
+        return codeArret;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public String getDuree() {
+        return duree;
+    }
+
+    public String getPrologue() {
+        return prologue;
+    }
+
+    public String getEpilogue() {
+        return epilogue;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+      
 }

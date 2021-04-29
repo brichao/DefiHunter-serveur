@@ -44,11 +44,18 @@ public class DefisCRUD {
             ArrayList<Defis> L = new ArrayList<Defis>();
             while (rs.next()) { 
                 Defis d = new Defis();
-                d.setId(rs.getString("id"));
+                d.setId(rs.getString("id")); 
                 d.setTitre(rs.getString("titre"));
-                d.setDatedecreation(rs.getTimestamp("datedecreation"));
-                d.setDescription(rs.getString("description"));
+                d.setIdType(rs.getInt("idType")); 
+                d.setDateCreation(rs.getTimestamp("datecreation"));
+                d.setDateModification(rs.getTimestamp("datemodification"));
                 d.setAuteur(rs.getString("auteur"));
+                d.setCodeArret(rs.getString("codearret"));
+                d.setPoints(rs.getInt("points"));
+                d.setDuree(rs.getString("duree"));
+                d.setPrologue(rs.getString("prologue"));
+                d.setEpilogue(rs.getString("epilogue"));
+                d.setCommentaire(rs.getString("commentaire"));
                 L.add(d);
             } 
             return L;
@@ -76,10 +83,17 @@ public class DefisCRUD {
             Defis d = new Defis();
             while (rs.next()) { 
                 d.setId(rs.getString("id")); 
-                d.setTitre(rs.getString("titre")); 
-                d.setDatedecreation(rs.getTimestamp("datedecreation"));
-                d.setDescription(rs.getString("description"));
+                d.setTitre(rs.getString("titre"));
+                d.setIdType(rs.getInt("idType")); 
+                d.setDateCreation(rs.getTimestamp("datecreation"));
+                d.setDateModification(rs.getTimestamp("datemodification"));
                 d.setAuteur(rs.getString("auteur"));
+                d.setCodeArret(rs.getString("codearret"));
+                d.setPoints(rs.getInt("points"));
+                d.setDuree(rs.getString("duree"));
+                d.setPrologue(rs.getString("prologue"));
+                d.setEpilogue(rs.getString("epilogue"));
+                d.setCommentaire(rs.getString("commentaire"));
             }
             //is non existant error 404
             if(d.getId() == null) {
@@ -120,11 +134,9 @@ public class DefisCRUD {
 
             //une erreur 403 si une ressource existe déjà avec le même identifiant
             if(read(id,response) == null) {
-               int rs = stmt.executeUpdate( "INSERT INTO defis(id, titre, datedecreation, auteur, arret, motcles, points, duree, description, epilogue)" 
-                                            + "values ('"+ d.getId() + "', '" + d.getTitre() + "', now(), '" 
-                                            + d.getAuteur() + "', '" + d.getArret() + "', '" + d.getMotCles() + "', '" 
-                                            + d.getPoints() + "', '" + d.getDuree() + "', '" + d.getDescription() + "', '"   
-                                            + d.getEpilogue() + "')" );
+               int rs = stmt.executeUpdate( "INSERT INTO defis values ('"+ d.getId() + "', '" + d.getTitre() + "',"+d.getIdType()+",now(), now(), '" 
+                                            + d.getAuteur() + "','"+d.getCodeArret()+"', "+ d.getPoints() + ", " + d.getDuree() + ",'"+d.getPrologue()+"', '"   
+                                            + d.getEpilogue() + "', '"+d.getCommentaire()+"'  )" );
             Defis inseree = this.read(id, response);
             
             return inseree;
@@ -163,9 +175,9 @@ public class DefisCRUD {
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
             if(!(read(id,response)== null)) {
                 int rs = stmt.executeUpdate("UPDATE defis set id='" + d.getId() + "', titre='" + d.getTitre() 
-                                            + "', datedecreation='" + d.getDatedecreation() + "', auteur='" + d.getAuteur() 
-                                            + "', arret='" + d.getArret()  + "', motcles='" + d.getMotCles()  + "', points='" + d.getPoints() 
-                                            + "', description='" + d.getDescription() + "', epilogue='" + d.getEpilogue()+ "' WHERE id = '" + id + "'");
+                                            + "', dateCreation='" +d.getDateCreation()+ "',dateModification= now(), auteur='" + d.getAuteur() 
+                                            + "', codeArret='" +d.getCodeArret()+ "', points='" + d.getPoints() 
+                                            + "',prologue='" + d.getPrologue()+ "' , epilogue='" + d.getEpilogue()+ "',commentaire='" + d.getCommentaire()+ "'  WHERE id = '" + id + "'");
                 return d;
             }else {
                 System.out.println("Defis does not exist : " + id );

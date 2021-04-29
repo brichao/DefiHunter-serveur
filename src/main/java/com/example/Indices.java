@@ -2,12 +2,12 @@ package com.example;
 
 public class Indices {
     
-    private String labeli;
+    private int labeli;
     private String idDefis;
     private String description;
     private int points;
 
-    public String getLabeli() {
+    public int getLabeli() {
         return labeli;
     }
 
@@ -23,7 +23,7 @@ public class Indices {
         return points;
     }
 
-    public void setLabeli(String labeli) {
+    public void setLabeli(int labeli) {
         this.labeli = labeli;
     }
 

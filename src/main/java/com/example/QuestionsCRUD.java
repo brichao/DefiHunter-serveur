@@ -26,8 +26,9 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis/indices")
-public class IndicesCRUD {
+@RequestMapping("/api/defis/questions")
+
+public class QuestionsCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
     private DataSource dataSource;
@@ -35,18 +36,19 @@ public class IndicesCRUD {
     
     //READ ALL -- GET
     @GetMapping("/")
-    public ArrayList<Indices> allIndices(HttpServletResponse response) {
+    public ArrayList<Questions> allIndices(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM indices");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Questions");
             
-            ArrayList<Indices> L = new ArrayList<Indices>();
+            ArrayList<Questions> L = new ArrayList<Questions>();
             while (rs.next()) { 
-                Indices u = new Indices();
-                u.setLabeli(rs.getInt("lebali"));
-                u.setIdDefis(rs.getString("iddefis"));
+                Questions u = new Questions();
+                u.setQuestionId(rs.getInt("questionId"));
+                u.setDefisId(rs.getString("defisId"));
                 u.setDescription(rs.getString("description"));
                 u.setPoints(rs.getInt("points"));
+                u.setSecret(rs.getString("secret"));
                 L.add(u);
             } 
             return L;
@@ -65,24 +67,25 @@ public class IndicesCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{indicesId}")
-    public Indices read(@PathVariable(value="indicesId") String id, HttpServletResponse response) {
+    @GetMapping("/{questionId}")
+    public Indices read(@PathVariable(value="questionId") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM indices where lebeli = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = " + id + "");
             
-            Indices u = new Indices();
+            Questions u = new Questions();
             while (rs.next()) {
-                u.setLabeli(rs.getInt("lebeli"));
-                u.setIdDefis(rs.getString("idDefis"));
+                u.setQuestionId(rs.getInt("questionId"));
+                u.setDefisId(rs.getString("defisId"));
                 u.setDescription(rs.getString("description"));
                 u.setPoints(rs.getInt("points"));
+                u.setSecret(rs.getString("secret"));
                 
             }
 
-            // Une erreur 404 si l'indice ne correspond pas à un defis dans la base.
-            if(u.getIdDefis() == null) {
-                System.out.println("Indice does not exist : " + id );
+            // Une erreur 404 si la question  ne correspond pas à une question  dans la base.
+            if(u.getQuestionId() == null) {
+                System.out.println("question does not exist : " +id );
                 response.setStatus(404);
                 return null;
             } else {
@@ -106,24 +109,24 @@ public class IndicesCRUD {
 
 
     //CREATE -- POST : /api/defis/{indicesId}
-    @PostMapping("/{indicesId}")
-    public Indices create(@PathVariable(value="indicesId") String id, @RequestBody Indices u, HttpServletResponse response){
+    @PostMapping("/{questionsId}")
+    public Indices create(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
-            //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( !(id.equals(u.getIdDefis())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getIdDefis());
+            //une erreur 412 si l'identifiant de la question   dans l'URL n'est pas le même que celui du la question dans le corp de la requête.
+            if( !(id.equals(u.getQuestionId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getQuestionId());
                 response.setStatus(412);
                 return null;
             }
              //une erreur 403 si un cexiste déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO indices values ("+ u.getLabeli() + ", '" + u.getIdDefis() + "', '" + u.getDescription() + ", '" + u.getPoints() + "')");
-                Indices inseree = this.read(id, response);
+                int rs = stmt.executeUpdate("INSERT INTO Indices values ("+ u.getQuestionId() + ", '" + u.getDefisId() + "', '" + u.getDescription() + ", '" + u.getPoints() + "' , '"+u.getSecret()+"' )");
+                Questions inseree = this.read(id, response);
                 return inseree;
             }else {
-                System.out.println("indices already exist: " + id );
+                System.out.println("Questions already exist: " + id );
                 response.setStatus(403);
                 return null;
             }
@@ -142,26 +145,26 @@ public class IndicesCRUD {
 
     
     //UPDATE -- PUT : /api/defis/{indicesId}
-    @PutMapping("/{indicesId}")
-    public Indices update(@PathVariable(value="indicesId") String id, @RequestBody Indices u, HttpServletResponse response) {
+    @PutMapping("/{questionId}")
+    public Indices update(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
-            // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
-            if(u.getIdDefis() == null) {
-                System.out.println("Indices does not exist : " + id );
+            // Une erreur 404 si l'identifiant de la question ne correspond pas à  celui d'une question dans la base.
+            if(u.getQuestionId() == null) {
+                System.out.println("Question does not exist : " + id );
                 response.setStatus(404);
                 return null;
 
-            //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( !(id.equals(u.getIdDefis())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getIdDefis());
+            //une erreur 412 si l'identifiant de la question  dans l'URL n'est pas le même que celui de la question dans le corp de la requête.
+            }else if( !(id.equals(u.getQuestionId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getQuestionId());
                 response.setStatus(412);
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Indices SET labeli="+u.getLabeli()+", idDefis ='"+u.getIdDefis()+"', description='"+u.getDescription()+"',points='"+u.getPoints()+"' WHERE idDefis = '"+id+"'");
-                Indices inseree = this.read(id, response);
+                int rs = stmt.executeUpdate("UPDATE Indices SET questionId="+u.getQuestionId()+", defisid ='"+u.getDefisId()+"', description='"+u.getDescription()+"',points='"+u.getPoints()+"',,secret='"+u.getSecret()+"' WHERE idDefis = '"+id+"'");
+                Questions inseree = this.read(id, response);
                 return inseree;
             }   
 
@@ -180,15 +183,15 @@ public class IndicesCRUD {
 
         
     //DELETE -- DELETE
-    @DeleteMapping("/{indicesId}")
-    public void delete(@PathVariable(value="indicesId") String id, HttpServletResponse response) {
+    @DeleteMapping("/{questionsId}")
+    public void delete(@PathVariable(value="questionsId") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM lesindices WHERE idDefis = '"+id+"'");
+            int rs = stmt.executeUpdate("DELETE FROM questions WHERE questionId = '"+id+"'");
 
-            // Une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base.
+            // Une erreur 404 si l'identifiant de la question  ne correspond pas à une question  dans la base.
             if(rs == 0){
-                System.out.println("indice does not exist : " + id );
+                System.out.println("question does not exist : " + id );
                 response.setStatus(404);
             }
         } catch (Exception e) {
@@ -205,6 +208,4 @@ public class IndicesCRUD {
 
 }
     
-
-
 

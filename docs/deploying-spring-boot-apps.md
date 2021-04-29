@@ -161,7 +161,7 @@ Heroku also provides a `pg` command that shows a lot more:
 ```term
 :::>> $ heroku pg
 ```
-
+dateCreation='" +d.getDateCreation()+ "'
 This indicates a hobby database (free) is running Postgres 9.3.3, with a single row of data.
 
 Once the database add-on has been created, Heroku will automatically populate the environment variables `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD`. These environment variables should allow your Spring Boot application to connect to the database without any other configuration as long as you add a PostgreSQL JDBC driver to your dependencies like so:

@@ -35,7 +35,7 @@ public class BlocsTexteCRUD {
     
     //READ ALL -- GET
     @GetMapping("/")
-    public ArrayList<Chamis> allChamis(HttpServletResponse response) {
+    public ArrayList<BlocsTexte> allBlocsTextes(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM BlocsTexte");
@@ -162,7 +162,7 @@ public class BlocsTexteCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE BlocsTexte SET blocstexteid ='"+b.getBlocsTexteId()+"',questionid='"+b.getQuestionsId()+"', indiceid='"+b.getIndiceId()+"',texte='"+u.getTexte()+"',defisid='"+b.getDefisId()+"' WHERE blocsTexteId = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE BlocsTexte SET blocstexteid ='"+b.getBlocsTexteId()+"',questionid='"+b.getQuestionsId()+"', indiceid='"+b.getIndiceId()+"',texte='"+b.getTexte()+"',defisid='"+b.getDefisId()+"' WHERE blocsTexteId = '"+id+"'");
                 BlocsTexte inseree = this.read(id, response);
                 return inseree;
             }   

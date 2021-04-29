@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
 @RequestMapping("/api/arrets")
-public class IndicesCRUD {
+public class ArretsCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
     private DataSource dataSource;
@@ -35,18 +35,18 @@ public class IndicesCRUD {
     
     //READ ALL -- GET
     @GetMapping("/")
-    public ArrayList<Chamis> allChamis(HttpServletResponse response) {
+    public ArrayList<Arrets> allarrets(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM arrets");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Arrets");
             
             ArrayList<Arrets> L = new ArrayList<Arrets>();
             while (rs.next()) { 
-                Arrets u = new Arrets();
-                u.setCodeArret(rs.getString("codeArret"));
-                u.setNomArret(rs.getString("nomArret"));
-                u.setStreetMap(rs.getString("streetMap"));
-                L.add(u);
+                Arrets a = new Arrets();
+                a.setCodeArret(rs.getString("codeArret"));
+                a.setNomArret(rs.getString("nomArret"));
+                a.setStreetMap(rs.getString("streetMap"));
+                L.add(a);
             } 
             return L;
         } catch (Exception e) {
@@ -65,26 +65,26 @@ public class IndicesCRUD {
 
     //READ -- GET 
     @GetMapping("/{arretId}")
-    public Indices read(@PathVariable(value="codeArretId") String id, HttpServletResponse response) {
+    public Arrets read(@PathVariable(value="codeArret") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM arrets where codeArret = '" + id + "'");
             
-            Arrets u = new Arrets();
+            Arrets a = new Arrets();
             while (rs.next()) {
-                u.setCodeArret(rs.getString("codeArret"));
-                u.setNomArret(rs.getString("nomArret"));
-                u.setStreetMap(rs.getString("streetMap"));
+                a.setCodeArret(rs.getString("codeArret"));
+                a.setNomArret(rs.getString("nomArret"));
+                a.setStreetMap(rs.getString("streetMap"));
                 
             }
 
-            // Une erreur 404 si l'indice ne correspond pas à un defis dans la base.
-            if(u.getCodeArret() == null) {
+            // Une erreur 404 si l'arret ne correspond pas à un arret dans la base.
+            if(a.getCodeArret() == null) {
                 System.out.println("Arret does not exist : " + id );
                 response.setStatus(404);
                 return null;
             } else {
-                return u; 
+                return a; 
             }
             
 
@@ -103,21 +103,21 @@ public class IndicesCRUD {
     }
 
 
-    //CREATE -- POST : /api/chamis/{chamisID}
+    //CREATE -- POST 
     @PostMapping("/{arretId}")
-    public Indices create(@PathVariable(value="codeArret") String id, @RequestBody codeArret u, HttpServletResponse response){
+    public Arrets create(@PathVariable(value="codearret") String id, @RequestBody Arrets a, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
-            //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( !(id.equals(u.getCodeArret())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getCodeArret());
+            //une erreur 412 si l'identifiant de l'arret  dans l'URL n'est pas le même que celui de l'arret dans le corp de la requête.
+            if( !(id.equals(a.getCodeArret())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + a.getCodeArret());
                 response.setStatus(412);
                 return null;
             }
-             //une erreur 403 si un cexiste déjà avec le même identifiant
+             //une erreur 403 si un arret existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO Arrets values ('"+ u.getCodeArret() + "', '"+ u.getNomArret() + "'," + u.getStreetMap() + "')");
+                int rs = stmt.executeUpdate("INSERT INTO Arrets values ('"+ a.getCodeArret() + "', '"+ a.getNomArret() + "'," + a.getStreetMap() + "')");
                 Arrets inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -139,27 +139,27 @@ public class IndicesCRUD {
     }
 
     
-    //UPDATE -- PUT : /api/chamis/{chamisID}
+    //UPDATE -- PUT 
     @PutMapping("/{arretId}")
-    public Indices update(@PathVariable(value="arretId") String id, @RequestBody Indices u, HttpServletResponse response) {
+    public Arrets update(@PathVariable(value="arretId") String id, @RequestBody Arrets a, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
-            // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
-            if(u.getCodeArret() == null) {
+            // Une erreur 404 si l'identifiant de l'arret ne correspond pas à  celui d'un arret dans la base.
+            if(a.getCodeArret() == null) {
                 System.out.println("Arret does not exist : " + id );
                 response.setStatus(404);
                 return null;
 
-            //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( !(id.equals(u.getCodeArret())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getCodeArret());
+            //une erreur 412 si l'identifiant de arret dans l'URL n'est pas le même que celui de l'arret dans le corp de la requête.
+            }else if( !(id.equals(a.getCodeArret())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + a.getCodeArret());
                 response.setStatus(412);
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Arrets SET codeArret ='"+u.getCodeArret()+"',nomarret='"+u.getNomArret()+"', streetmap='"+u.getStreetMap()+"' WHERE codeArret = '"+id+"'");
-                Indices inseree = this.read(id, response);
+                int rs = stmt.executeUpdate("UPDATE Arrets SET codeArret ='"+a.getCodeArret()+"',nomarret='"+a.getNomArret()+"', streetmap='"+a.getStreetMap()+"' WHERE codeArret = '"+id+"'");
+                Arrets inseree = this.read(id, response);
                 return inseree;
             }   
 
@@ -184,7 +184,7 @@ public class IndicesCRUD {
             Statement stmt = connection.createStatement(); 
             int rs = stmt.executeUpdate("DELETE FROM arrets WHERE codeArret = '"+id+"'");
 
-            // Une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base.
+            // Une erreur 404 si l'identifiant de arret  ne correspond pas à un arret dans la base.
             if(rs == 0){
                 System.out.println("arret does not exist : " + id );
                 response.setStatus(404);

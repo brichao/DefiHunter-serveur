@@ -1,11 +1,11 @@
-DROP TABLE public.indices cascade;
-DROP TABLE public.questions cascade;
-DROP TABLE public.motsCles cascade;
-DROP TABLE public.defiscles cascade;
-DROP TABLE public.typesdefis cascade;
-DROP TABLE public.defis cascade;
-DROP TABLE public.arrets cascade;
-DROP TABLE public.chamis cascade;
+DROP TABLE IF exists public.indices cascade;
+DROP TABLE IF exists public.questions cascade;
+DROP TABLE IF exists public.typesdefis cascade;
+DROP TABLE IF exists public.defis cascade;
+DROP TABLE IF exists public.arrets cascade;
+DROP TABLE IF exists public.chamis cascade;
+DROP TABLE IF exists public.blocstexte cascade;
+DROP TABLE IF exists public.motscles cascade;
 
 
 create table chamis (
@@ -24,18 +24,12 @@ create table arrets (
 	CONSTRAINT arret_pk PRIMARY KEY (codeArret)
 );
 
-CREATE TABLE typesdefis (
-	idType SERIAL,
-	nomType varchar,
-	CONSTRAINT types_pk PRIMARY KEY (idType)
-);
-
 CREATE TABLE defis (
-	id varchar,
+	defisid varchar,
 	titre varchar,
-	idType integer,
-	datedeCreation timestamp,
-	datedeModification timestamp,
+	nomtype varchar,
+	dateCreation timestamp,
+	dateModification timestamp,
 	auteur varchar,
 	codeArret varchar,
 	points integer,
@@ -43,42 +37,50 @@ CREATE TABLE defis (
 	prologue varchar,
 	epilogue varchar,
 	commentaire varchar,
-	CONSTRAINT defis_pk PRIMARY KEY (id),
+	CONSTRAINT defis_pk PRIMARY KEY (defisid),
 	CONSTRAINT defis_fk1 FOREIGN KEY (auteur) REFERENCES chamis(pseudo),
-	CONSTRAINT defis_fk2 FOREIGN KEY (codeArret) REFERENCES arrets(codeArret),
-	CONSTRAINT defis_fk3 FOREIGN KEY (idType) REFERENCES typesdefis(idType)
-);
-
-create table motscles (
-	idmotscles SERIAL,
-	motcle varchar, 
-	CONSTRAINT motscles_pk PRIMARY KEY (idmotscles)
-);
-
-create table defiscles (
-	idmotscles integer,
-	idDefis varchar, 
-	CONSTRAINT defiscles_pk PRIMARY KEY (idmotscles, idDefis),
-	CONSTRAINT defiscles_fk1 FOREIGN KEY (idmotscles) REFERENCES motscles(idmotscles),
-	CONSTRAINT defiscles_fk2 FOREIGN KEY (idDefis) REFERENCES defis(id)
+	CONSTRAINT defis_fk2 FOREIGN KEY (codeArret) REFERENCES arrets(codeArret)
 );
 
 CREATE TABLE questions (
-	labelQ varchar(3),
-	idDefis varchar(4) ,
+	questionsid SERIAL,
+	defisid varchar(4),
+	questionnum integer,
 	description varchar,
-	points int4 ,
+	points integer ,
 	secret varchar ,
-	CONSTRAINT questions_pk PRIMARY KEY (labelQ, idDefis),
-	CONSTRAINT questions_fk FOREIGN KEY (idDefis) REFERENCES defis(id)
+	CONSTRAINT questions_pk PRIMARY KEY (questionsid, defisid),
+	CONSTRAINT questions_fk FOREIGN KEY (defisid) REFERENCES defis(defisid)
 );
 
 CREATE TABLE indices (
-	labelI varchar(3),
-	idDefis varchar(4) ,
+	indicesid SERIAL,
+	defisid varchar(4) ,
+	indicenum integer,
 	description varchar ,
 	points int4 ,
-	CONSTRAINT indice_pk PRIMARY KEY (labelI, idDefis),
-	CONSTRAINT indice_fk FOREIGN KEY (idDefis) REFERENCES defis(id)
+	CONSTRAINT indice_pk PRIMARY KEY (indicesid, defisid),
+	CONSTRAINT indice_fk FOREIGN KEY (defisid) REFERENCES defis(defisid)
 );
+
+create table blocstexte (
+	blocstexteid SERIAL,
+	questionsid integer,
+	indicesid integer,
+	texte varchar,
+	defisid varchar,
+	CONSTRAINT blocstexte_pk PRIMARY KEY (blocstexteid),
+	CONSTRAINT blocstexte_fk1 FOREIGN KEY (defisid) REFERENCES defis(defisid),
+	CONSTRAINT blocstexte_fk2 FOREIGN KEY (questionsid, defisid) REFERENCES questions(questionsid, defisid),
+	CONSTRAINT blocstexte_fk3 FOREIGN KEY (indicesid, defisid) REFERENCES indices(indicesid, defisid)
+);
+
+create table motscles (
+	defisid varchar,
+	motcle varchar,
+	CONSTRAINT motscles_pk PRIMARY KEY (defisid, motcle),
+	CONSTRAINT motscles_fk FOREIGN KEY (defisid) REFERENCES defis(defisid)
+);
+
+
 

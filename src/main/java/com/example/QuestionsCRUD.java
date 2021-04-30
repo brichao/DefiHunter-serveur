@@ -36,7 +36,7 @@ public class QuestionsCRUD {
     
     //READ ALL -- GET
     @GetMapping("/")
-    public ArrayList<Questions> allIndices(HttpServletResponse response) {
+    public ArrayList<Questions> allQuestions(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM Questions");
@@ -44,8 +44,9 @@ public class QuestionsCRUD {
             ArrayList<Questions> L = new ArrayList<Questions>();
             while (rs.next()) { 
                 Questions u = new Questions();
-                u.setQuestionId(rs.getInt("questionId"));
-                u.setDefisId(rs.getString("defisId"));
+                u.setQuestionId(rs.getInt("questionid"));
+                u.setDefisId(rs.getString("defisid"));
+                u.setQuestionNum(rs.getInt("questionnum"));
                 u.setDescription(rs.getString("description"));
                 u.setPoints(rs.getInt("points"));
                 u.setSecret(rs.getString("secret"));
@@ -67,16 +68,17 @@ public class QuestionsCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{questionId}")
-    public Indices read(@PathVariable(value="questionId") int id, HttpServletResponse response) {
+    @GetMapping("/{questionid}")
+    public Questions read(@PathVariable(value="questionid") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = " + id + "");
             
             Questions u = new Questions();
             while (rs.next()) {
-                u.setQuestionId(rs.getInt("questionId"));
-                u.setDefisId(rs.getString("defisId"));
+                u.setQuestionId(rs.getInt("questionid"));
+                u.setDefisId(rs.getString("defisid"));
+                u.setQuestionNum(rs.getInt("questionnum"));
                 u.setDescription(rs.getString("description"));
                 u.setPoints(rs.getInt("points"));
                 u.setSecret(rs.getString("secret"));
@@ -84,7 +86,7 @@ public class QuestionsCRUD {
             }
 
             // Une erreur 404 si la question  ne correspond pas à une question  dans la base.
-            if(u.getQuestionId() == null) {
+            if(u.getQuestionId() == 0) {
                 System.out.println("question does not exist : " +id );
                 response.setStatus(404);
                 return null;
@@ -110,19 +112,20 @@ public class QuestionsCRUD {
 
     //CREATE -- POST : /api/defis/{indicesId}
     @PostMapping("/{questionsId}")
-    public Indices create(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response){
+    public Questions create(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de la question   dans l'URL n'est pas le même que celui du la question dans le corp de la requête.
-            if( !(id.equals(u.getQuestionId())) ) {
+            if( !(id != u.getQuestionId()) ) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getQuestionId());
                 response.setStatus(412);
                 return null;
             }
              //une erreur 403 si un cexiste déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO Indices values ("+ u.getQuestionId() + ", '" + u.getDefisId() + "', '" + u.getDescription() + ", '" + u.getPoints() + "' , '"+u.getSecret()+"' )");
+                int rs = stmt.executeUpdate("INSERT INTO Indices (defisid, questionnum, description, points, secret) values ('" 
+                                        + u.getDefisId() + "',"+ u.getQuestionNum() + ", '" + u.getDescription() + ", '" + u.getPoints() + "' , '"+u.getSecret()+"' )");
                 Questions inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -146,24 +149,25 @@ public class QuestionsCRUD {
     
     //UPDATE -- PUT : /api/defis/{indicesId}
     @PutMapping("/{questionId}")
-    public Indices update(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response) {
+    public Questions update(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
             // Une erreur 404 si l'identifiant de la question ne correspond pas à  celui d'une question dans la base.
-            if(u.getQuestionId() == null) {
+            if(u.getQuestionId() == 0) {
                 System.out.println("Question does not exist : " + id );
                 response.setStatus(404);
                 return null;
 
             //une erreur 412 si l'identifiant de la question  dans l'URL n'est pas le même que celui de la question dans le corp de la requête.
-            }else if( !(id.equals(u.getQuestionId())) ) {
+            }else if( !(id != u.getQuestionId()) ) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getQuestionId());
                 response.setStatus(412);
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Indices SET questionId="+u.getQuestionId()+", defisid ='"+u.getDefisId()+"', description='"+u.getDescription()+"',points='"+u.getPoints()+"',,secret='"+u.getSecret()+"' WHERE idDefis = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE Indices SET defisid ='"+u.getDefisId()+"questionnum=" + u.getQuestionNum()
+                            +", description='"+u.getDescription()+"',points='"+u.getPoints()+"',,secret='"+u.getSecret()+"' WHERE idDefis = '"+id+"'");
                 Questions inseree = this.read(id, response);
                 return inseree;
             }   

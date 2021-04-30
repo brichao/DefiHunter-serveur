@@ -3,6 +3,7 @@ package com.example;
 public class Questions{
     private int  questionId ;
     private String defisId;
+    private int questionNum;
     private String description;
     private int  points;
     private String secret ;
@@ -13,6 +14,9 @@ public class Questions{
 
     public String getDefisId() {
         return defisId;
+    }
+    public int getQuestionNum() {
+        return questionNum;
     }
      public String getDescription() {
         return description;
@@ -33,6 +37,10 @@ public class Questions{
     public void setDefisId(String defisId) {
         this.defisId = defisId;
     }
+
+     public void setQuestionNum(int questionNum) {
+        this.questionNum = questionNum;
+    }
     
     public void setDescription(String description) {
         this.description = description;
@@ -45,7 +53,5 @@ public class Questions{
     public void setSecret(String secret) {
         this.secret = secret;
     }
-    
-    
-    
+ 
 }

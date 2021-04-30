@@ -44,9 +44,9 @@ public class DefisCRUD {
             ArrayList<Defis> L = new ArrayList<Defis>();
             while (rs.next()) { 
                 Defis d = new Defis();
-                d.setId(rs.getString("id")); 
+                d.setId(rs.getString("defisid")); 
                 d.setTitre(rs.getString("titre"));
-                d.setIdType(rs.getInt("idType")); 
+                d.setNomType(rs.getString("nomtype")); 
                 d.setDateCreation(rs.getTimestamp("datecreation"));
                 d.setDateModification(rs.getTimestamp("datemodification"));
                 d.setAuteur(rs.getString("auteur"));
@@ -78,13 +78,13 @@ public class DefisCRUD {
     public Defis read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM defis where id = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM defis where defisid = '" + id + "'");
             
             Defis d = new Defis();
             while (rs.next()) { 
-                d.setId(rs.getString("id")); 
+                d.setId(rs.getString("defisid")); 
                 d.setTitre(rs.getString("titre"));
-                d.setIdType(rs.getInt("idType")); 
+                d.setNomType(rs.getString("nomtype")); 
                 d.setDateCreation(rs.getTimestamp("datecreation"));
                 d.setDateModification(rs.getTimestamp("datemodification"));
                 d.setAuteur(rs.getString("auteur"));
@@ -134,7 +134,7 @@ public class DefisCRUD {
 
             //une erreur 403 si une ressource existe déjà avec le même identifiant
             if(read(id,response) == null) {
-               int rs = stmt.executeUpdate( "INSERT INTO defis values ('"+ d.getId() + "', '" + d.getTitre() + "',"+d.getIdType()+",now(), now(), '" 
+               int rs = stmt.executeUpdate( "INSERT INTO defis values ('"+ d.getId() + "', '" + d.getTitre() + "','"+d.getNomType()+"',now(), now(), '" 
                                             + d.getAuteur() + "','"+d.getCodeArret()+"', "+ d.getPoints() + ", " + d.getDuree() + ",'"+d.getPrologue()+"', '"   
                                             + d.getEpilogue() + "', '"+d.getCommentaire()+"'  )" );
             Defis inseree = this.read(id, response);
@@ -174,10 +174,10 @@ public class DefisCRUD {
 
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
             if(!(read(id,response)== null)) {
-                int rs = stmt.executeUpdate("UPDATE defis set id='" + d.getId() + "', titre='" + d.getTitre() 
-                                            + "', dateCreation='" +d.getDateCreation()+ "',dateModification= now(), auteur='" + d.getAuteur() 
+                int rs = stmt.executeUpdate("UPDATE defis set defisid='" + d.getId() + "', titre='" + d.getTitre()
+                                            + "', nomType='"+d.getNomType()+"' , dateModification=now(), auteur='" + d.getAuteur() 
                                             + "', codeArret='" +d.getCodeArret()+ "', points='" + d.getPoints() 
-                                            + "',prologue='" + d.getPrologue()+ "' , epilogue='" + d.getEpilogue()+ "',commentaire='" + d.getCommentaire()+ "'  WHERE id = '" + id + "'");
+                                            + "', prologue='" + d.getPrologue()+ "' , epilogue='" + d.getEpilogue()+ "', commentaire='" + d.getCommentaire()+ "'  WHERE defisid = '" + id + "'");
                 return d;
             }else {
                 System.out.println("Defis does not exist : " + id );
@@ -205,7 +205,7 @@ public class DefisCRUD {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             if(!(read(id,response)== null)) {
-                int rs = stmt.executeUpdate("DELETE FROM defis WHERE id = '"+id+"'");
+                int rs = stmt.executeUpdate("DELETE FROM defis WHERE defisid = '"+id+"'");
 
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base       
             }else {

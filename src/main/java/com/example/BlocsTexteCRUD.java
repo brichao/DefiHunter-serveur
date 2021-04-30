@@ -1,6 +1,7 @@
 package com.example;
 
-import java.sql.Connection; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet; 
 import java.sql.Statement; 
 import java.util.ArrayList; 
@@ -43,7 +44,7 @@ public class BlocsTexteCRUD {
             ArrayList<BlocsTexte> L = new ArrayList<BlocsTexte>();
             while (rs.next()) { 
                 BlocsTexte b = new BlocsTexte();
-                b.setBlocsTexteId(rs.getInt("blocsTexte"));
+                b.setBlocsTexteId(rs.getInt("blocstexteid"));
                 b.setQuestionsId(rs.getInt("questionsid"));
                 b.setIndiceId(rs.getInt("indiceid"));
                 b.setTexte(rs.getString("texte"));
@@ -74,7 +75,7 @@ public class BlocsTexteCRUD {
             
             BlocsTexte b = new BlocsTexte();
             while (rs.next()) {
-                b.setBlocsTexteId(rs.getInt("blocsTexte"));
+                b.setBlocsTexteId(rs.getInt("blocstexteid"));
                 b.setQuestionsId(rs.getInt("questionsid"));
                 b.setIndiceId(rs.getInt("indiceid"));
                 b.setTexte(rs.getString("texte"));
@@ -114,14 +115,20 @@ public class BlocsTexteCRUD {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( !(id.equals(b.getBlocsTexteId())) ) {
+            if( Integer.parseInt(id) != b.getBlocsTexteId() ) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + b.getBlocsTexteId());
                 response.setStatus(412);
                 return null;
             }
              //une erreur 403 si un cexiste déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO BlocsTexte values ('"+ b.getBlocsTexteId() + "', '"+ b.getQuestionsId() + "'," + b.getIndiceId() + ", '" + b.getTexte() + ", '" + b.getDefisId() + "')");
+                PreparedStatement p = connection.prepareStatement("INSERT INTO BlocsTexte values (?,?,?,?,?)");
+                p.setInt(1, b.getBlocsTexteId());
+                p.setInt(2, b.getQuestionsId() );
+                p.setInt(3, b.getIndiceId() );
+                p.setString(4, b.getTexte() );
+                p.setString(5, b.getDefisId() );
+                p.executeUpdate();
                 BlocsTexte inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -156,7 +163,7 @@ public class BlocsTexteCRUD {
                 return null;
 
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( !(id.equals(b.getBlocsTexteId())) ) {
+            }else if( Integer.parseInt(id) != b.getBlocsTexteId()) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + b.getBlocsTexteId());
                 response.setStatus(412);
                 return null;

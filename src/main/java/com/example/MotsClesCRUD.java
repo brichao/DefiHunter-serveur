@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis/motcles")
+@RequestMapping("/api/defis")
 public class MotsClesCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
@@ -34,17 +34,17 @@ public class MotsClesCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/")
-    public ArrayList<MotCles> allMotCles(HttpServletResponse response) {
+    @GetMapping("/motscles")
+    public ArrayList<MotsCles> allMotCles(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM motsles");
             
-            ArrayList<MotCles> L = new ArrayList<MotCles>();
+            ArrayList<MotsCles> L = new ArrayList<MotsCles>();
             while (rs.next()) { 
-                MotCles u = new MotCles();
-                u.setDefisId(rs.getString("defisId"));
-                u.setMotCle(rs.getString("motCle"));
+                MotsCles u = new MotsCles();
+                u.setDefisId(rs.getString("defisid"));
+                u.setMotCle(rs.getString("motcle"));
                 L.add(u);
             } 
             return L;
@@ -63,30 +63,27 @@ public class MotsClesCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{defisId}")
-    public MotCles read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
+    @GetMapping("/{defisId}/motscles")
+    public MotsCles read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM motscles where defisId = '" + id + "'");
             
-            MotCles u = new MotCles();
+            MotsCles u = new MotsCles();
             while (rs.next()) {
-                u.setDefisId(rs.getString("defisId"));
-                u.setMotCle(rs.getString("motCle"));
-               
-                
+                u.setDefisId(rs.getString("defisid"));
+                u.setMotCle(rs.getString("motcle"));
             }
 
             // Une erreur 404 si l'indice ne correspond pas à un defis dans la base.
             if(u.getDefisId() == null) {
-                System.out.println("motcle does not exist : " + id );
+                System.out.println("defisId does not exist : " + id );
                 response.setStatus(404);
                 return null;
             } else {
                 return u; 
             }
             
-
         } catch (Exception e) {
             response.setStatus(500);
 
@@ -103,21 +100,23 @@ public class MotsClesCRUD {
 
 
     //CREATE -- POST : /api/defis/{defisId}
-    @PostMapping("/{defisId}")
-    public MotCles create(@PathVariable(value="defisId") String id, @RequestBody MotCles u, HttpServletResponse response){
+    @PostMapping("/{defisId}/motscles/{motCle}")
+    public MotsCles create(@PathVariable(value="defisId") String id, @PathVariable(value="motCle") String motcle, @RequestBody MotsCles m, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( !(id.equals(u.getDefisId())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getDefisId());
+            if( !(motcle.equals(m.getMotCle())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + motcle + "!=" + m.getMotCle());
                 response.setStatus(412);
                 return null;
             }
+
+            ResultSet rs = stmt.executeQuery("SELECT motcle FROM motscles WHERE motcle = '" + motcle +"'");
              //une erreur 403 si un cexiste déjà avec le même identifiant
-            if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO indices values ( '" + u.getDefisId() + "', '" + u.getMotCle() + "' )");
-                MotCles inseree = this.read(id, response);
+            if(rs.next()) {
+                stmt.executeUpdate("INSERT INTO indices values ( '" + m.getDefisId() + "', '" + m.getMotCle() + "' )");
+                MotsCles inseree = this.read(id, response);
                 return inseree;
             }else {
                 System.out.println("motcle already exist: " + id );
@@ -138,27 +137,27 @@ public class MotsClesCRUD {
     }
 
     
-    //UPDATE -- PUT : /api/defis/{defisId}
-    @PutMapping("/{defisId}")
-    public MotCles update(@PathVariable(value="defisId") String id, @RequestBody MotCles u, HttpServletResponse response) {
+    //UPDATE -- PUT : /api/defis/{defisId}/motscles/{motCle}
+    @PutMapping("/{defisId}/motscles/{motCle}")
+    public MotsCles update(@PathVariable(value="defisId") String id, @PathVariable(value="motcle") String motcle, @RequestBody MotsCles m, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
             // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
-            if(u.getDefisId() == null) {
-                System.out.println("MotCles does not exist : " + id );
+            if(m.getMotCle() == null) {
+                System.out.println("MotCles does not exist : " + motcle );
                 response.setStatus(404);
                 return null;
 
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( !(id.equals(u.getDefisId())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + u.getDefisId());
+            }else if( !(motcle.equals(m.getMotCle())) && !(id.equals(m.getDefisId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + m.getDefisId() + motcle +"!=" + m.getMotCle() );
                 response.setStatus(412);
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE MotCles SET  defisId ='"+u.getDefisId()+"', motCle='"+u.getMotCle()+"' WHERE idDefis = '"+id+"'");
-                MotCles inseree = this.read(id, response);
+                int rs = stmt.executeUpdate("UPDATE MotCles SET  defisId ='"+m.getDefisId()+"', motCle='"+m.getMotCle()+"' WHERE idDefis = '"+id+"'");
+                MotsCles inseree = this.read(id, response);
                 return inseree;
             }   
 
@@ -177,11 +176,11 @@ public class MotsClesCRUD {
 
         
     //DELETE -- DELETE
-    @DeleteMapping("/{defisId}")
-    public void delete(@PathVariable(value="defisId") String id, HttpServletResponse response) {
+    @DeleteMapping("/{defisId}/motscles/{motCle}")
+    public void delete(@PathVariable(value="defisId") String id, @PathVariable(value="motCle") String motCle, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM motscles WHERE defisid = '"+id+"'");
+            int rs = stmt.executeUpdate("DELETE FROM motscles WHERE defisid = '"+id+"' AND motcle = '" + motCle +"'");
 
             // Une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base.
             if(rs == 0){

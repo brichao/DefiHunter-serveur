@@ -2,17 +2,22 @@ package com.example;
 
 public class Indices {
     
-    private int labeli;
-    private String idDefis;
+    private int indicesId;
+    private String defisId;
+    private int indiceNum;
     private String description;
     private int points;
 
-    public int getLabeli() {
-        return labeli;
+    public int getIndicesId() {
+        return indicesId;
     }
 
-    public String getIdDefis() {
-        return idDefis;
+    public String getDefisId() {
+        return defisId;
+    }
+
+    public int getIndiceNum() {
+        return indiceNum;
     }
 
     public String getDescription() {
@@ -23,12 +28,16 @@ public class Indices {
         return points;
     }
 
-    public void setLabeli(int labeli) {
-        this.labeli = labeli;
+    public void setIndicesId(int indicesId) {
+        this.indicesId = indicesId;
     }
 
-    public void setIdDefis(String idDefis) {
-        this.idDefis = idDefis;
+    public void setDefisId(String defisId) {
+        this.defisId = defisId;
+    }
+
+    public void setIndiceNum(int indiceNum) {
+        this.indiceNum = indiceNum;
     }
 
     public void setDescription(String description) {

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class Defis {
     private String id; 
     private String titre; 
-    private int idType; 
+    private String nomType; 
     private Timestamp dateCreation;  
     private Timestamp dateModification; 
     private String auteur;   
@@ -23,11 +23,11 @@ public class Defis {
     public void setTitre(String titre) {
         this.titre = titre;
     }
-
-    public void setIdType(int idType) {
-        this.idType = idType;
+    public void setNomType(String nomType) {
+        this.nomType = nomType;
     }
 
+    
     public void setDateCreation(Timestamp dateCreation) {
         this.dateCreation = dateCreation;
     }
@@ -73,8 +73,8 @@ public class Defis {
         return titre;
     }
 
-    public int getIdType() {
-        return idType;
+    public String getNomType() {
+        return nomType;
     }
 
     public Timestamp getDateCreation() {

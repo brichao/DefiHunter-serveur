@@ -1,6 +1,7 @@
 package com.example;
 
-import java.sql.Connection; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet; 
 import java.sql.Statement; 
 import java.util.ArrayList; 
@@ -38,14 +39,14 @@ public class ArretsCRUD {
     public ArrayList<Arrets> allarrets(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Arrets");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM arrets");
             
             ArrayList<Arrets> L = new ArrayList<Arrets>();
             while (rs.next()) { 
                 Arrets a = new Arrets();
-                a.setCodeArret(rs.getString("codeArret"));
-                a.setNomArret(rs.getString("nomArret"));
-                a.setStreetMap(rs.getString("streetMap"));
+                a.setCodeArret(rs.getString("codearret"));
+                a.setNomArret(rs.getString("nomarret"));
+                a.setStreetMap(rs.getString("streetmap"));
                 L.add(a);
             } 
             return L;
@@ -64,17 +65,17 @@ public class ArretsCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{arretId}")
-    public Arrets read(@PathVariable(value="codeArret") String id, HttpServletResponse response) {
+    @GetMapping("/{codearret}")
+    public Arrets read(@PathVariable(value="codearret") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM arrets where codeArret = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM arrets where codearret = '" + id + "'");
             
             Arrets a = new Arrets();
             while (rs.next()) {
-                a.setCodeArret(rs.getString("codeArret"));
-                a.setNomArret(rs.getString("nomArret"));
-                a.setStreetMap(rs.getString("streetMap"));
+                a.setCodeArret(rs.getString("codearret"));
+                a.setNomArret(rs.getString("nomarret"));
+                a.setStreetMap(rs.getString("streetmap"));
                 
             }
 
@@ -104,7 +105,7 @@ public class ArretsCRUD {
 
 
     //CREATE -- POST 
-    @PostMapping("/{arretId}")
+    @PostMapping("/{codearret}")
     public Arrets create(@PathVariable(value="codearret") String id, @RequestBody Arrets a, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -117,7 +118,12 @@ public class ArretsCRUD {
             }
              //une erreur 403 si un arret existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO Arrets values ('"+ a.getCodeArret() + "', '"+ a.getNomArret() + "'," + a.getStreetMap() + "')");
+                PreparedStatement p = connection.prepareStatement("INSERT INTO Arrets values (?,?,?)");
+                p.setString(1, a.getCodeArret());
+                p.setString(2, a.getNomArret() );
+                p.setString(3, a.getStreetMap() );
+                p.executeUpdate();
+
                 Arrets inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -140,8 +146,8 @@ public class ArretsCRUD {
 
     
     //UPDATE -- PUT 
-    @PutMapping("/{arretId}")
-    public Arrets update(@PathVariable(value="arretId") String id, @RequestBody Arrets a, HttpServletResponse response) {
+    @PutMapping("/{codearret}")
+    public Arrets update(@PathVariable(value="codearret") String id, @RequestBody Arrets a, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
@@ -158,7 +164,7 @@ public class ArretsCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Arrets SET codeArret ='"+a.getCodeArret()+"',nomarret='"+a.getNomArret()+"', streetmap='"+a.getStreetMap()+"' WHERE codeArret = '"+id+"'");
+                int rs = stmt.executeUpdate("UPDATE Arrets SET codeArret ='"+a.getCodeArret()+"', nomarret='"+a.getNomArret()+"', streetmap='"+a.getStreetMap()+"' WHERE codeArret = '"+id+"'");
                 Arrets inseree = this.read(id, response);
                 return inseree;
             }   
@@ -178,11 +184,11 @@ public class ArretsCRUD {
 
         
     //DELETE -- DELETE
-    @DeleteMapping("/{arretId}")
-    public void delete(@PathVariable(value="arretId") String id, HttpServletResponse response) {
+    @DeleteMapping("/{codearret}")
+    public void delete(@PathVariable(value="codearret") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM arrets WHERE codeArret = '"+id+"'");
+            int rs = stmt.executeUpdate("DELETE FROM arrets WHERE codearret = '"+id+"'");
 
             // Une erreur 404 si l'identifiant de arret  ne correspond pas à un arret dans la base.
             if(rs == 0){

@@ -174,21 +174,22 @@ insert into blocstexte (indicesid, texte, defisid) values (6,'- Les oranges te d
 - Reste sur le parking pour te recharger les piles.','D145');
 insert into blocstexte (indicesid, texte, defisid) values (7,'','D145');
 insert into blocstexte (questionsid, texte, defisid) values (8,'- Cherche celui qui pourrait te donner matière à te protéger pendant l''hiver.
-  - Il est là. Il te regarde de haut. Il t''observe.
-  - Il bêle. "Je suis ceux que je suis. Et le vert, je le mange !"','D145');
+- Il est là. Il te regarde de haut. Il t''observe.
+- Il bêle. "Je suis ceux que je suis. Et le vert, je le mange !"','D145');
+
 insert into blocstexte (indicesid, texte, defisid) values (8,'Il tourne en rond pour le plaisir des petits. Cherche le.','D151');
 insert into blocstexte (questionsid, texte, defisid) values (9,'- Si il n''y est pas, demande à quelqu''un où il est, quand il y est :-)
-  - Cherche les deux moutons.. Cherche le.','D151');
+- Cherche les deux moutons.. Cherche le.','D151');
 insert into blocstexte (indicesid, texte, defisid) values (9,' - Arrivé.e à l''arrêt victor hugo ?
-  - Peut être as tu besoin d''argent ? Mets toi du coté de la banque.
-  - Un mouton te regarde ! Regarde le...','D189');
-insert into blocstexte (questionsid, texte, defisid) values (10,' - Tu as vu le mouton ?','D189');
-insert into blocstexte (questionsid, texte, defisid) values (11' - Suis le mouton comme font les moutons, tu veras des chamois !
-  - Les chamoix sont en plein centre ville !','D189');
-insert into blocstexte (questionsid, texte, defisid) values (12'  - Fait attention en regardant en haut.
-  - Tu pourrais te faire écraser par des pachidermes.
-  - Ils sont pas très loin.','D189');
-insert into blocstexte (questionsid, texte, defisid) values (13'    - Tout à l''heure il y avait des écureils. Tu as vu ?','D189');
+- Peut être as tu besoin d''argent ? Mets toi du coté de la banque.
+- Un mouton te regarde ! Regarde le...','D189');
+insert into blocstexte (questionsid, texte, defisid) values (10,'- Tu as vu le mouton ?','D189');
+insert into blocstexte (questionsid, texte, defisid) values (11,'- Suis le mouton comme font les moutons, tu veras des chamois !
+- Les chamoix sont en plein centre ville !','D189');
+insert into blocstexte (questionsid, texte, defisid) values (12,'- Fait attention en regardant en haut.
+- Tu pourrais te faire écraser par des pachidermes.
+- Ils sont pas très loin.','D189');
+insert into blocstexte (questionsid, texte, defisid) values (13,'- Tout à l''heure il y avait des écureils. Tu as vu ?','D189');
 
 
 

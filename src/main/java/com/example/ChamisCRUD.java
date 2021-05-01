@@ -1,6 +1,7 @@
 package com.example;
 
-import java.sql.Connection; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet; 
 import java.sql.Statement; 
 import java.util.ArrayList; 
@@ -121,7 +122,13 @@ public class ChamisCRUD {
             }
              //une erreur 403 si un chamis existe déjà avec le même identifiant
             if(read(id,response) == null) {
-                int rs = stmt.executeUpdate("INSERT INTO chamis values ('"+ u.getPseudo() + "', '"+ u.getEmail() + "'," + u.getAge() + ", '" + u.getVille() + "', '" + u.getDescription() + "')");
+                PreparedStatement p = connection.prepareStatement("INSERT INTO Chamis values (?,?,?,?,?)");
+                p.setString(1, u.getPseudo());
+                p.setString(2, u.getEmail() );
+                p.setInt(3, u.getAge() );
+                p.setString(4, u.getVille() );
+                p.setString(5, u.getDescription() );
+                p.executeUpdate();
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }else {
@@ -162,7 +169,13 @@ public class ChamisCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE chamis SET pseudo ='"+u.getPseudo()+"',email='"+u.getEmail()+"', age="+u.getAge()+", ville='"+u.getVille()+"', description='"+u.getDescription()+"' WHERE pseudo = '"+id+"'");
+                PreparedStatement p = connection.prepareStatement("UPDATE chamis SET pseudo = ?,email= ?, age= ?, ville= ?, description=? WHERE pseudo = '"+id+"'");
+                p.setString(1, u.getPseudo());
+                p.setString(2, u.getEmail() );
+                p.setInt(3, u.getAge() );
+                p.setString(4, u.getVille() );
+                p.setString(5, u.getDescription() );
+                p.executeUpdate();
                 Chamis inseree = this.read(id, response);
                 return inseree;
             }   

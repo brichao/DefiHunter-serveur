@@ -38,14 +38,14 @@ public class MotsClesCRUD {
     public ArrayList<MotsCles> allMotCles(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM motsles");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM motscles");
             
             ArrayList<MotsCles> L = new ArrayList<MotsCles>();
             while (rs.next()) { 
-                MotsCles u = new MotsCles();
-                u.setDefisId(rs.getString("defisid"));
-                u.setMotCle(rs.getString("motcle"));
-                L.add(u);
+                MotsCles m = new MotsCles();
+                m.setDefisId(rs.getString("defisid"));
+                m.setMotCle(rs.getString("motcle"));
+                L.add(m);
             } 
             return L;
         } catch (Exception e) {
@@ -64,24 +64,26 @@ public class MotsClesCRUD {
 
     //READ -- GET 
     @GetMapping("/{defisId}/motscles")
-    public MotsCles read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
+    public ArrayList<MotsCles> read(@PathVariable(value="defisId") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM motscles where defisId = '" + id + "'");
             
-            MotsCles u = new MotsCles();
-            while (rs.next()) {
-                u.setDefisId(rs.getString("defisid"));
-                u.setMotCle(rs.getString("motcle"));
-            }
+            ArrayList<MotsCles> L = new ArrayList<MotsCles>();
+            while (rs.next()) { 
+                MotsCles m = new MotsCles();
+                m.setDefisId(rs.getString("defisid"));
+                m.setMotCle(rs.getString("motcle"));
+                L.add(m);
+            } 
 
             // Une erreur 404 si l'indice ne correspond pas à un defis dans la base.
-            if(u.getDefisId() == null) {
-                System.out.println("defisId does not exist : " + id );
+            if(L.isEmpty()) {
+                System.out.println("defisId does not have mots cles : " + id );
                 response.setStatus(404);
                 return null;
             } else {
-                return u; 
+                return L; 
             }
             
         } catch (Exception e) {
@@ -99,9 +101,9 @@ public class MotsClesCRUD {
     }
 
 
-    //CREATE -- POST : /api/defis/{defisId}
+    //CREATE -- POST : /api/defis/{defisId}/motscles/{motCle}
     @PostMapping("/{defisId}/motscles/{motCle}")
-    public MotsCles create(@PathVariable(value="defisId") String id, @PathVariable(value="motCle") String motcle, @RequestBody MotsCles m, HttpServletResponse response){
+    public ArrayList<MotsCles> create(@PathVariable(value="defisId") String id, @PathVariable(value="motCle") String motcle, @RequestBody MotsCles m, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
@@ -112,14 +114,15 @@ public class MotsClesCRUD {
                 return null;
             }
 
-            ResultSet rs = stmt.executeQuery("SELECT motcle FROM motscles WHERE motcle = '" + motcle +"'");
+            ResultSet rs = stmt.executeQuery("SELECT motcle FROM motscles WHERE motcle = '" + motcle +"' AND defisid = '"+id+"'");
              //une erreur 403 si un cexiste déjà avec le même identifiant
-            if(rs.next()) {
-                stmt.executeUpdate("INSERT INTO indices values ( '" + m.getDefisId() + "', '" + m.getMotCle() + "' )");
-                MotsCles inseree = this.read(id, response);
-                return inseree;
+            if(! (rs.next())) {
+                stmt.executeUpdate("INSERT INTO motscles values ( '" + m.getDefisId() + "', '" + m.getMotCle() + "' )");
+                ArrayList<MotsCles> L = new ArrayList<MotsCles>();
+                L = this.read(id, response);
+                return L;
             }else {
-                System.out.println("motcle already exist: " + id );
+                System.out.println("motcle already exist: " + motcle );
                 response.setStatus(403);
                 return null;
             }
@@ -139,7 +142,7 @@ public class MotsClesCRUD {
     
     //UPDATE -- PUT : /api/defis/{defisId}/motscles/{motCle}
     @PutMapping("/{defisId}/motscles/{motCle}")
-    public MotsCles update(@PathVariable(value="defisId") String id, @PathVariable(value="motcle") String motcle, @RequestBody MotsCles m, HttpServletResponse response) {
+    public ArrayList<MotsCles> update(@PathVariable(value="defisId") String id, @PathVariable(value="motcle") String motcle, @RequestBody MotsCles m, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
@@ -156,9 +159,10 @@ public class MotsClesCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE MotCles SET  defisId ='"+m.getDefisId()+"', motCle='"+m.getMotCle()+"' WHERE idDefis = '"+id+"'");
-                MotsCles inseree = this.read(id, response);
-                return inseree;
+                int rs = stmt.executeUpdate("UPDATE MotsCles SET  defisId ='"+m.getDefisId()+"', motCle='"+m.getMotCle()+"' WHERE idDefis = '"+id+"'");
+                ArrayList<MotsCles> L = new ArrayList<MotsCles>();
+                L = this.read(id, response);
+                return L;
             }   
 
         } catch (Exception e) {

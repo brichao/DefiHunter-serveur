@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/blocstexte")
+@RequestMapping("/api/defis")
 public class BlocsTexteCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
@@ -35,7 +35,7 @@ public class BlocsTexteCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/")
+    @GetMapping("/blocstexte")
     public ArrayList<BlocsTexte> allBlocsTextes(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -67,11 +67,11 @@ public class BlocsTexteCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{blocsTexteId}")
-    public BlocsTexte read(@PathVariable(value="blocsTexteId") String id, HttpServletResponse response) {
+    @GetMapping("/{defisIs}/blocstexte¨/{blocsTexteId}")
+    public BlocsTexte read(@PathVariable(value="defisIs") String id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM blocsTexte where blocsTexteId = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM blocsTexte where blocsTexteId = " +id);
             
             BlocsTexte b = new BlocsTexte();
             while (rs.next()) {

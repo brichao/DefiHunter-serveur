@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis/questions")
+@RequestMapping("/api/defis/")
 
 public class QuestionsCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
@@ -35,7 +35,7 @@ public class QuestionsCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/")
+    @GetMapping("/questions")
     public ArrayList<Questions> allQuestions(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -43,14 +43,14 @@ public class QuestionsCRUD {
             
             ArrayList<Questions> L = new ArrayList<Questions>();
             while (rs.next()) { 
-                Questions u = new Questions();
-                u.setQuestionId(rs.getInt("questionid"));
-                u.setDefisId(rs.getString("defisid"));
-                u.setQuestionNum(rs.getInt("questionnum"));
-                u.setDescription(rs.getString("description"));
-                u.setPoints(rs.getInt("points"));
-                u.setSecret(rs.getString("secret"));
-                L.add(u);
+                Questions q = new Questions();
+                q.setQuestionId(rs.getInt("questionsid"));
+                q.setDefisId(rs.getString("defisid"));
+                q.setQuestionNum(rs.getInt("questionnum"));
+                q.setDescription(rs.getString("description"));
+                q.setPoints(rs.getInt("points"));
+                q.setSecret(rs.getString("secret"));
+                L.add(q);
             } 
             return L;
         } catch (Exception e) {
@@ -68,15 +68,15 @@ public class QuestionsCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{questionid}")
-    public Questions read(@PathVariable(value="questionid") int id, HttpServletResponse response) {
+    @GetMapping("/questions/{questionid}")
+    public Questions read(@PathVariable(value="questionid") int qid, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = " + id + "");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = " + qid );
             
             Questions u = new Questions();
             while (rs.next()) {
-                u.setQuestionId(rs.getInt("questionid"));
+                u.setQuestionId(rs.getInt("questionsid"));
                 u.setDefisId(rs.getString("defisid"));
                 u.setQuestionNum(rs.getInt("questionnum"));
                 u.setDescription(rs.getString("description"));
@@ -87,7 +87,7 @@ public class QuestionsCRUD {
 
             // Une erreur 404 si la question  ne correspond pas à une question  dans la base.
             if(u.getQuestionId() == 0) {
-                System.out.println("question does not exist : " +id );
+                System.out.println("question does not exist : " );
                 response.setStatus(404);
                 return null;
             } else {
@@ -110,8 +110,8 @@ public class QuestionsCRUD {
     }
 
 
-    //CREATE -- POST : /api/defis/{indicesId}
-    @PostMapping("/{questionsId}")
+    //CREATE -- POST : /api/defis/questions/{questionsId}
+    @PostMapping("/questions/{questionsId}")
     public Questions create(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -148,7 +148,7 @@ public class QuestionsCRUD {
 
     
     //UPDATE -- PUT : /api/defis/{indicesId}
-    @PutMapping("/{questionId}")
+    @PutMapping("/questions/{questionId}")
     public Questions update(@PathVariable(value="questionsId") int id, @RequestBody Questions u, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 

@@ -168,7 +168,12 @@ public class IndicesCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Indices SET defisid ='"+i.getDefisId()+"', description = '"+i.getDescription()+"',points="+i.getPoints()+" WHERE defisid = '"+id+"' and indicenum = "+indiceNum);
+                PreparedStatement p = connection.prepareStatement("UPDATE Indices SET defisid =?, description =?,points=? WHERE defisid = '"+id+"' and indicenum = "+indiceNum);
+                p.setString(1, i.getDefisId());
+                p.setInt(2, i.getIndiceNum() );
+                p.setString(3, i.getDescription() );
+                p.setInt(4, i.getIndicesId() );
+                p.executeUpdate();
                 Indices inseree = this.read(id, indiceNum, response);
                 return inseree;
             }   

@@ -11,7 +11,7 @@ public class Defis {
     private String auteur;   
     private String codeArret;
     private int points;
-    private String duree;
+    private double duree;
     private String prologue;
     private String epilogue;
     private String commentaire ;
@@ -48,7 +48,7 @@ public class Defis {
         this.points = points;
     }
 
-    public void setDuree(String duree) {
+    public void setDuree(double duree) {
         this.duree = duree;
     }
 
@@ -97,7 +97,7 @@ public class Defis {
         return points;
     }
 
-    public String getDuree() {
+    public double getDuree() {
         return duree;
     }
 

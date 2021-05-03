@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServletResponse; 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+
 
 import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
@@ -127,8 +129,15 @@ public class QuestionsCRUD {
             }
              //une erreur 403 si un cexiste déjà avec le même identifiant
             if(read(id,response).isEmpty()) {
-                int rs = stmt.executeUpdate("INSERT INTO Questions (defisid, questionnum, description, points, secret) values ('" 
-                                        + q.getDefisId() + "',"+ q.getQuestionNum() + ", '" + q.getDescription() + ", '" + q.getPoints() + "' , '"+q.getSecret()+"' )");
+                
+               
+                PreparedStatement p = connection.prepareStatement("INSERT INTO defis values (?,?,?,?,?)");
+                p.setString(1, q.getDefisId());
+                p.setInt(2, q.getQuestionId() );
+                p.setString(3, q.getDescription() );
+                p.setInt(4, q.getPoints() );
+                p.setString(5, q.getSecret() );
+                p.executeUpdate();
                 ArrayList<Questions> L = this.read(id, response);;
                 return L;
             }else {
@@ -169,10 +178,15 @@ public class QuestionsCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Questions SET questionnum=" + q.getQuestionNum()
-                            +", description='"+q.getDescription()+"', points='"+q.getPoints()+"', secret='"+q.getSecret()+"' WHERE defisId = '"+id+"' AND questionNum = "+Qid);
-                ArrayList<Questions> L = this.read(id, response);
-                return L;
+                 PreparedStatement p = connection.prepareStatement("UPDATE Questions SET questionnum = ?, description= ?, points= ?,secret= ?, WHERE defisid = '"+id+"' AND questionNum = "+Qid);
+
+                    p.setInt(1, q.getQuestionNum());
+                    p.setString(2, q.getDescription() );
+                    p.setInt(3, q.getPoints() );
+                    p.setString(4, q.getSecret() );
+                    p.executeUpdate();
+                    ArrayList<Questions> L = this.read(id, response);
+                    return L;
             }   
 
         } catch (Exception e) {

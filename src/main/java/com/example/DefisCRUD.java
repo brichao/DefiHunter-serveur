@@ -1,6 +1,7 @@
 package com.example;
 
-import java.sql.Connection; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet; 
 import java.sql.Statement; 
 import java.util.ArrayList; 
@@ -52,7 +53,7 @@ public class DefisCRUD {
                 d.setAuteur(rs.getString("auteur"));
                 d.setCodeArret(rs.getString("codearret"));
                 d.setPoints(rs.getInt("points"));
-                d.setDuree(rs.getString("duree"));
+                d.setDuree(rs.getDouble("duree"));
                 d.setPrologue(rs.getString("prologue"));
                 d.setEpilogue(rs.getString("epilogue"));
                 d.setCommentaire(rs.getString("commentaire"));
@@ -90,7 +91,7 @@ public class DefisCRUD {
                 d.setAuteur(rs.getString("auteur"));
                 d.setCodeArret(rs.getString("codearret"));
                 d.setPoints(rs.getInt("points"));
-                d.setDuree(rs.getString("duree"));
+                d.setDuree(rs.getDouble("duree"));
                 d.setPrologue(rs.getString("prologue"));
                 d.setEpilogue(rs.getString("epilogue"));
                 d.setCommentaire(rs.getString("commentaire"));
@@ -134,9 +135,23 @@ public class DefisCRUD {
 
             //une erreur 403 si une ressource existe déjà avec le même identifiant
             if(read(id,response) == null) {
+                /*
                int rs = stmt.executeUpdate( "INSERT INTO defis values ('"+ d.getId() + "', '" + d.getTitre() + "','"+d.getNomType()+"',now(), now(), '" 
                                             + d.getAuteur() + "','"+d.getCodeArret()+"', "+ d.getPoints() + ", " + d.getDuree() + ",'"+d.getPrologue()+"', '"   
                                             + d.getEpilogue() + "', '"+d.getCommentaire()+"'  )" );
+                */
+                PreparedStatement p = connection.prepareStatement("INSERT INTO defis values (?,?,?, now(), now(), ?,?,?,?,?,?,?)");
+                p.setString(1, d.getId());
+                p.setString(2, d.getTitre() );
+                p.setString(3, d.getNomType() );
+                p.setString(4, d.getAuteur() );
+                p.setString(5, d.getCodeArret() );
+                p.setInt(6, d.getPoints() );
+                p.setDouble(7, d.getDuree() );
+                p.setString(8, d.getPrologue() );
+                p.setString(9, d.getEpilogue() );
+                p.setString(10, d.getCommentaire() );
+                p.executeUpdate();
             Defis inseree = this.read(id, response);
             
             return inseree;
@@ -174,10 +189,20 @@ public class DefisCRUD {
 
             //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
             if(!(read(id,response)== null)) {
-                int rs = stmt.executeUpdate("UPDATE defis set defisid='" + d.getId() + "', titre='" + d.getTitre()
-                                            + "', nomType='"+d.getNomType()+"' , dateModification=now(), auteur='" + d.getAuteur() 
-                                            + "', codeArret='" +d.getCodeArret()+ "', points='" + d.getPoints() 
-                                            + "', prologue='" + d.getPrologue()+ "' , epilogue='" + d.getEpilogue()+ "', commentaire='" + d.getCommentaire()+ "'  WHERE defisid = '" + id + "'");
+               PreparedStatement p = connection.prepareStatement("UPDATE defis SET defisid = ?, titre= ?, nomType= ?, dateModification= now(),"+
+                                                "auteur = ?, codeArret=?, points=?, duree=?, prologue=?, epilogue=?, commentaire=? WHERE defisid = '"+id+"'");
+
+                p.setString(1, d.getId());
+                p.setString(2, d.getTitre() );
+                p.setString(3, d.getNomType() );
+                p.setString(4, d.getAuteur() );
+                p.setString(5, d.getCodeArret() );
+                p.setInt(6, d.getPoints() );
+                p.setDouble(7, d.getDuree() );
+                p.setString(8, d.getPrologue() );
+                p.setString(9, d.getEpilogue() );
+                p.setString(10, d.getCommentaire() );
+                p.executeUpdate();
                 return d;
             }else {
                 System.out.println("Defis does not exist : " + id );

@@ -164,7 +164,11 @@ public class ArretsCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE Arrets SET codeArret ='"+a.getCodeArret()+"', nomarret='"+a.getNomArret()+"', streetmap='"+a.getStreetMap()+"' WHERE codeArret = '"+id+"'");
+                PreparedStatement p = connection.prepareStatement("UPDATE Arrets SET codeArret =?, nomarret=?, streetmap=? WHERE codeArret = '"+id+"'");
+                p.setString(1, a.getCodeArret());
+                p.setString(2, a.getNomArret() );
+                p.setString(3, a.getStreetMap() );
+                p.executeUpdate();
                 Arrets inseree = this.read(id, response);
                 return inseree;
             }   

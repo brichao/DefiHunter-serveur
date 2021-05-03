@@ -169,7 +169,13 @@ public class BlocsTexteCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE BlocsTexte SET blocstexteid ='"+b.getBlocsTexteId()+"',questionid='"+b.getQuestionsId()+"', indiceid='"+b.getIndiceId()+"',texte='"+b.getTexte()+"',defisid='"+b.getDefisId()+"' WHERE blocsTexteId = '"+id+"'");
+                PreparedStatement p = connection.prepareStatement("UPDATE BlocsTexte SET blocstexteid =?,questionid=?, indiceid=?,texte=?,defisid=? WHERE blocsTexteId = '"+id+"'");
+                p.setInt(1, b.getBlocsTexteId());
+                p.setInt(2, b.getQuestionsId() );
+                p.setInt(3, b.getIndiceId() );
+                p.setString(4, b.getTexte() );
+                p.setString(5, b.getDefisId() );
+                p.executeUpdate();
                 BlocsTexte inseree = this.read(id, response);
                 return inseree;
             }   

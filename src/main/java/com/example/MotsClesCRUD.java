@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.util.ArrayList; 
 import javax.servlet.http.HttpServletResponse; 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+
 
 import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
@@ -117,7 +119,11 @@ public class MotsClesCRUD {
             ResultSet rs = stmt.executeQuery("SELECT motcle FROM motscles WHERE motcle = '" + motcle +"' AND defisid = '"+id+"'");
              //une erreur 403 si un cexiste déjà avec le même identifiant
             if(! (rs.next())) {
-                stmt.executeUpdate("INSERT INTO motscles values ( '" + m.getDefisId() + "', '" + m.getMotCle() + "' )");
+                ;
+                PreparedStatement p = connection.prepareStatement("INSERT INTO motsCles values (?,?)");
+                p.setString(1, m.getDefisId());
+                p.setString(2, m.getMotCle() );
+                p.executeUpdate();
                 ArrayList<MotsCles> L = new ArrayList<MotsCles>();
                 L = this.read(id, response);
                 return L;
@@ -159,10 +165,14 @@ public class MotsClesCRUD {
                 return null;
 
             }else{
-                int rs = stmt.executeUpdate("UPDATE MotsCles SET  defisId ='"+m.getDefisId()+"', motCle='"+m.getMotCle()+"' WHERE idDefis = '"+id+"'");
+                PreparedStatement p = connection.prepareStatement("UPDATE defis SET defisid = ?, motCle= ?,  WHERE defisid = '"+id+"'");
+                p.setString(1, m.getDefisId());
+                p.setString(2, m.getMotCle() );
+                p.executeUpdate();
                 ArrayList<MotsCles> L = new ArrayList<MotsCles>();
                 L = this.read(id, response);
                 return L;
+               
             }   
 
         } catch (Exception e) {

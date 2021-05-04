@@ -30,7 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/questions")
+@RequestMapping("/api/defis")
 
 public class QuestionsCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
@@ -39,7 +39,7 @@ public class QuestionsCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/")
+    @GetMapping("/questions")
     public ArrayList<Questions> allQuestions(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -72,29 +72,29 @@ public class QuestionsCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{questionsId}")
-    public Questions read(@PathVariable(value="questionsId") int id, HttpServletResponse response) {
+    @GetMapping("/{defisid}/questions/{questionNum}")
+    public Questions read(@PathVariable(value="defisid") String id,  @PathVariable(value="questionNum") int Qid, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = '" + id + "'");
-        
-            // Une erreur 404 si la question n'est pas dans la base 
-            if( !(rs.next()) ) {
-                System.out.println("Questions does not exist for Defi : " + id);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where defisid = '" + id + "' and questionNum = " + Qid );
+            
+            // Une erreur 404 si la question n'est pas dans la base pour ce défi
+            if( ! (rs.next()) ) {
+                System.out.println("Question" +Qid+"does not exist for Defi : " + id);
                 response.setStatus(404);
                 return null;
             } else {
                 Questions q = new Questions();
+                 do {
                     q.setQuestionId(rs.getInt("questionsid"));
                     q.setDefisId(rs.getString("defisid"));
                     q.setQuestionNum(rs.getInt("questionnum"));
                     q.setDescription(rs.getString("description"));
                     q.setPoints(rs.getInt("points"));
                     q.setSecret(rs.getString("secret"));
-                
+                } while (rs.next());
                 return q; 
             }
-            
 
         } catch (Exception e) {
             response.setStatus(500);
@@ -111,32 +111,31 @@ public class QuestionsCRUD {
     }
 
 
-    //CREATE -- POST : /api/defis/questions/{questionsId}
-    @PostMapping("/{questionsId}")
-    public Questions create(@PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response){
+    //CREATE -- POST : /api/defis/{defisid}/questions/{questionsId}
+    @PostMapping("/{defisid}/questions/{questionNum}")
+    public Questions create(@PathVariable(value="defisid") String id, @PathVariable(value="questionNum") int Qid, @RequestBody Questions q, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de la question   dans l'URL n'est pas le même que celui du la question dans le corp de la requête.
-            if( !(Qid != q.getQuestionId())  ) {
-                System.out.println("Request Body not equivanlent to variable path : " + Qid + "!=" + q.getQuestionId());
+            if( !(Qid != q.getQuestionNum()) && !(id.equals(q.getDefisId())) ) {
+                System.out.println("Request Body not equivalent to variable path : " + Qid + "!=" + q.getQuestionId());
                 response.setStatus(412);
                 return null;
             }
-             //une erreur 403 si un cexiste déjà avec le même identifiant
-            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionId = " + Qid);
-            if( !(rs.next()) ) {
-                PreparedStatement p = connection.prepareStatement("INSERT INTO defis values (?,?,?,?,?)");
-                p.setInt(1, q.getQuestionId() );
-                p.setString(2, q.getDefisId());
+             //une erreur 403 si un existe déjà avec le même identifiant
+            if(read(id, Qid, response) == null) {
+                PreparedStatement p = connection.prepareStatement("INSERT INTO questions (defisid, questionnum, description, points, secret) values (?,?,?,?,?)");
+                p.setString(1, q.getDefisId());
+                p.setInt(2, q.getQuestionNum() );
                 p.setString(3, q.getDescription() );
                 p.setInt(4, q.getPoints() );
                 p.setString(5, q.getSecret() );
                 p.executeUpdate();
-                Questions Q = this.read(q.getQuestionId(), response);;
-                return Q;
+                Questions inseree = this.read(id, Qid, response);
+                return inseree;
             }else {
-                System.out.println("Questions already exist: " + Qid );
+                System.out.println("question already exist for " + id + " question n."+Qid);
                 response.setStatus(403);
                 return null;
             }
@@ -155,32 +154,30 @@ public class QuestionsCRUD {
 
     
     //UPDATE -- PUT : /api/defis/{defisId}/questions/{questionId}
-    @PutMapping("/{defisId}/questions/{questionId}")
-    public Questions update(@PathVariable(value="defisId") String id, @PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response) {
+    @PutMapping("/{defisId}/questions/{questionNum}")
+    public Questions update(@PathVariable(value="defisId") String id, @PathVariable(value="questionsNum") int Qid, @RequestBody Questions q, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
             // Une erreur 404 si l'identifiant de la question ne correspond pas à  celui d'une question dans la base.
-            if(q.getQuestionNum() == 0) {
+            if(read(id, Qid, response) == null) {
                 System.out.println("Question does not exist : " + id );
                 response.setStatus(404);
                 return null;
 
             //une erreur 412 si l'identifiant de la question  dans l'URL n'est pas le même que celui de la question dans le corp de la requête.
-            }else if( !(Qid != q.getQuestionNum()) ) {
-                System.out.println("Request Body not equivalent to variable path : " + Qid + "!=" + q.getQuestionNum());
+            }else if( !(Qid != q.getQuestionNum()) && !(id.equals(q.getDefisId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + q.getDefisId() + " and " + Qid +" != " +q.getQuestionNum());
                 response.setStatus(412);
                 return null;
 
             }else{
-                 PreparedStatement p = connection.prepareStatement("UPDATE Questions SET questionnum = ?, description= ?, points= ?,secret= ?, WHERE defisid = '"+id+"' AND questionNum = "+Qid);
-
-                    p.setInt(1, q.getQuestionNum());
-                    p.setString(2, q.getDescription() );
-                    p.setInt(3, q.getPoints() );
-                    p.setString(4, q.getSecret() );
+                 PreparedStatement p = connection.prepareStatement("UPDATE Questions SET description= ?, points= ?,secret= ?, WHERE defisid = '"+id+"' AND questionNum = "+Qid);
+                    p.setString(1, q.getDescription() );
+                    p.setInt(2, q.getPoints() );
+                    p.setString(3, q.getSecret() );
                     p.executeUpdate();
-                    Questions Q = this.read(q.getQuestionId(), response);
+                    Questions Q = this.read(id, Qid, response);
                     return Q;
             }   
 
@@ -199,11 +196,11 @@ public class QuestionsCRUD {
 
         
     //DELETE -- DELETE
-    @DeleteMapping("/{defisId}/questions{questionsId}")
-    public void delete(@PathVariable(value="defisId") String id, @PathVariable(value="questionsId") int Qid, HttpServletResponse response) {
+    @DeleteMapping("/{defisId}/questions{questionNum}")
+    public void delete(@PathVariable(value="defisId") String id, @PathVariable(value="questionNum") int Qid, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            int rs = stmt.executeUpdate("DELETE FROM questions WHERE questionnum = '"+Qid+"'");
+            int rs = stmt.executeUpdate("DELETE FROM questions WHERE defisid = '"+id+"' AND questionNum = " + Qid);
 
             // Une erreur 404 si l'identifiant de la question  ne correspond pas à une question  dans la base.
             if(rs == 0){

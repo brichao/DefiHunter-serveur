@@ -73,22 +73,20 @@ public class IndicesCRUD {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM indices where defisId = '" + id + "' and indiceNum = "+indiceNum );
             
-            Indices i = new Indices();
-            while (rs.next()) {
-                i.setIndicesId(rs.getInt("indicesid"));
-                i.setDefisId(rs.getString("defisid"));
-                i.setIndiceNum(rs.getInt("indicenum"));
-                i.setDescription(rs.getString("description"));
-                i.setPoints(rs.getInt("points"));
-                
-            }
-
             // Une erreur 404 si l'indice ne correspond pas à un defis dans la base.
-            if(i.getIndiceNum() == 0) {
+            if( ! (rs.next()) ) {
                 System.out.println("indice does not exist : " + indiceNum );
                 response.setStatus(404);
                 return null;
             } else {
+                Indices i = new Indices();
+                 do {
+                    i.setIndicesId(rs.getInt("indicesid"));
+                    i.setDefisId(rs.getString("defisid"));
+                    i.setIndiceNum(rs.getInt("indicenum"));
+                    i.setDescription(rs.getString("description"));
+                    i.setPoints(rs.getInt("points"));
+                } while (rs.next());
                 return i; 
             }
             
@@ -114,8 +112,8 @@ public class IndicesCRUD {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( indiceNum != i.getIndiceNum() ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + i.getDefisId());
+            if( indiceNum != i.getIndiceNum() && !(id.equals(i.getDefisId())) ) {
+                System.out.println("Request Body not equivalent to variable path : " + id + "!=" + i.getDefisId());
                 response.setStatus(412);
                 return null;
             }
@@ -154,28 +152,27 @@ public class IndicesCRUD {
     public Indices update(@PathVariable(value="defisId") String id, @PathVariable(value="indiceNum") int indiceNum, @RequestBody Indices i, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-           
+            
             // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
-            if(i.getDefisId() == null) {
-                System.out.println("Indices does not exist : " + id );
+            if(read(id, indiceNum, response) == null) {
+                System.out.println("Indices does not exist : " + indiceNum + "for defi : " + id );
                 response.setStatus(404);
                 return null;
 
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( !(id.equals(i.getDefisId())) ) {
-                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + i.getDefisId());
+            }else if( indiceNum != i.getIndiceNum() && !(id.equals(i.getDefisId())) ) {
+                System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + i.getDefisId() + " and " + indiceNum +" != " +i.getIndiceNum());
                 response.setStatus(412);
                 return null;
 
             }else{
                 PreparedStatement p = connection.prepareStatement("UPDATE Indices SET defisid =?, description =?,points=? WHERE defisid = '"+id+"' and indicenum = "+indiceNum);
                 p.setString(1, i.getDefisId());
-                p.setInt(2, i.getIndiceNum() );
-                p.setString(3, i.getDescription() );
-                p.setInt(4, i.getIndicesId() );
+                p.setString(2, i.getDescription() );
+                p.setInt(3, i.getPoints() );
                 p.executeUpdate();
-                Indices inseree = this.read(id, indiceNum, response);
-                return inseree;
+                Indices I = this.read(id, indiceNum, response);
+                return I;
             }   
 
         } catch (Exception e) {

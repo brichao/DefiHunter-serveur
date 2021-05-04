@@ -30,7 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis")
+@RequestMapping("/api/questions")
 
 public class QuestionsCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
@@ -39,7 +39,7 @@ public class QuestionsCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/questions")
+    @GetMapping("/")
     public ArrayList<Questions> allQuestions(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -72,31 +72,27 @@ public class QuestionsCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{defisid}/questions")
-    public ArrayList<Questions> read(@PathVariable(value="defisid") String id, HttpServletResponse response) {
+    @GetMapping("/{questionsId}")
+    public Questions read(@PathVariable(value="questionsId") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where defisid = '" + id + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionsId = '" + id + "'");
         
-            ArrayList<Questions> L = new ArrayList<Questions>();
-            while (rs.next()) {
-                Questions q = new Questions();
-                q.setQuestionId(rs.getInt("questionsid"));
-                q.setDefisId(rs.getString("defisid"));
-                q.setQuestionNum(rs.getInt("questionnum"));
-                q.setDescription(rs.getString("description"));
-                q.setPoints(rs.getInt("points"));
-                q.setSecret(rs.getString("secret"));
-                L.add(q);
-            }
-
-            // Une erreur 404 si le defi n'est pas dans la base 
-            if(id == null) {
+            // Une erreur 404 si la question n'est pas dans la base 
+            if( !(rs.next()) ) {
                 System.out.println("Questions does not exist for Defi : " + id);
                 response.setStatus(404);
                 return null;
             } else {
-                return L; 
+                Questions q = new Questions();
+                    q.setQuestionId(rs.getInt("questionsid"));
+                    q.setDefisId(rs.getString("defisid"));
+                    q.setQuestionNum(rs.getInt("questionnum"));
+                    q.setDescription(rs.getString("description"));
+                    q.setPoints(rs.getInt("points"));
+                    q.setSecret(rs.getString("secret"));
+                
+                return q; 
             }
             
 
@@ -115,33 +111,32 @@ public class QuestionsCRUD {
     }
 
 
-    //CREATE -- POST : /api/defis/{defisid}/questions/{questionsId}
-    @PostMapping("/{defisid}/questions/{questionsId}")
-    public ArrayList<Questions> create(@PathVariable(value="defisid") String id, @PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response){
+    //CREATE -- POST : /api/defis/questions/{questionsId}
+    @PostMapping("/{questionsId}")
+    public Questions create(@PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
             //une erreur 412 si l'identifiant de la question   dans l'URL n'est pas le même que celui du la question dans le corp de la requête.
-            if( !(Qid != q.getQuestionNum()) && !(id.equals(q.getDefisId())) ) {
+            if( !(Qid != q.getQuestionId())  ) {
                 System.out.println("Request Body not equivanlent to variable path : " + Qid + "!=" + q.getQuestionId());
                 response.setStatus(412);
                 return null;
             }
              //une erreur 403 si un cexiste déjà avec le même identifiant
-            if(read(id,response).isEmpty()) {
-                
-               
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where questionId = " + Qid);
+            if( !(rs.next()) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO defis values (?,?,?,?,?)");
-                p.setString(1, q.getDefisId());
-                p.setInt(2, q.getQuestionId() );
+                p.setInt(1, q.getQuestionId() );
+                p.setString(2, q.getDefisId());
                 p.setString(3, q.getDescription() );
                 p.setInt(4, q.getPoints() );
                 p.setString(5, q.getSecret() );
                 p.executeUpdate();
-                ArrayList<Questions> L = this.read(id, response);;
-                return L;
+                Questions Q = this.read(q.getQuestionId(), response);;
+                return Q;
             }else {
-                System.out.println("Questions already exist: " + id );
+                System.out.println("Questions already exist: " + Qid );
                 response.setStatus(403);
                 return null;
             }
@@ -161,7 +156,7 @@ public class QuestionsCRUD {
     
     //UPDATE -- PUT : /api/defis/{defisId}/questions/{questionId}
     @PutMapping("/{defisId}/questions/{questionId}")
-    public ArrayList<Questions> update(@PathVariable(value="defisId") String id, @PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response) {
+    public Questions update(@PathVariable(value="defisId") String id, @PathVariable(value="questionsId") int Qid, @RequestBody Questions q, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
            
@@ -185,8 +180,8 @@ public class QuestionsCRUD {
                     p.setInt(3, q.getPoints() );
                     p.setString(4, q.getSecret() );
                     p.executeUpdate();
-                    ArrayList<Questions> L = this.read(id, response);
-                    return L;
+                    Questions Q = this.read(q.getQuestionId(), response);
+                    return Q;
             }   
 
         } catch (Exception e) {

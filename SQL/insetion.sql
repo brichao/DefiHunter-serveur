@@ -130,6 +130,12 @@ insert into indices (defisid, indicenum , description , points ) values ('D127',
 insert into indices (defisid, indicenum , description , points ) values ('D145', 1, '- Vas du coté de Belledonne.', 0);
 insert into indices (defisid, indicenum , description , points ) values ('D145', 2, 'Grenoble est un ville verte. Donc avec des voitures vertes.', 2);
 insert into indices (defisid, indicenum , description , points ) values ('D145', 3, 'A l''angle de l''orangerie, regarde l''autre angle.', 2);
+insert into indices (defisid, indicenum , description , points ) values ('D151', 1, 'Pour tourner en rond les petits montent sur des chevaux, des voitures, ou encore des avions.', 3);
+insert into indices (defisid, indicenum , description , points ) values ('D189', 1, '- Tu fumes ? Regarde où tu peux acheter des cigarettes.
+        - Maintenant sans bouger regarde à droite en haut.
+        - Les cheminées ne fument pas. Mais le mouton te regarde..', 4);
+
+
 
 --LesQuestions
 insert into questions (defisid, questionnum , description , points, secret) values ('D127', 1, 'Quel numéro ?', 1, '26');
@@ -139,7 +145,15 @@ insert into questions (defisid, questionnum , description , points, secret) valu
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 1, '- Qu''a le renard entre les deux yeux ?', 3, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 2, '- Qu''y a t il à coté du troupeau de mouton ?', 2, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 3, '- Quel outil a-t-il été emprunté à un artiste par un autre artiste ?', 40, '');
-insert into questions (defisid, questionnum , description , points, secret) values ('D145', 1, 'Combien de boucles sous son cou ?', 5, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D145', 1, '-Combien de boucles sous son cou ?', 5, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D151', 1, '-Quelle est la première lettre du nom de la rue dans laquelle sont les moutons ?', 1, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D189', 1, '- Quel est le nom du magazin sous le mouton ?', 4, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D189', 2, '- Combien y-a-t''il de chamois ?', 4, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D189', 3, '- Combien y-a-t''il d''éléphants ?', 4, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D189', 4, '- Combien y-a-t''il d''écureuils (compter uniquement les tout plats) ?', 4, '');
+
+
+
 
 --LesBlocsTexte
 insert into blocstexte (indicesid, texte, defisid) values (1,'- Une amie t''a demandé de préparer un grand méchoui pour 120 personnes.

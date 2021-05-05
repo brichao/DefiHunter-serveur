@@ -123,8 +123,11 @@ public class QuestionsCRUD {
                 response.setStatus(412);
                 return null;
             }
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where defisid = '" + id + "' and questionNum = " + Qid );
+            
              //une erreur 403 si un existe déjà avec le même identifiant
-            if(read(id, Qid, response) == null) {
+            if( ! (rs.next()) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO questions (defisid, questionnum, description, points, secret) values (?,?,?,?,?)");
                 p.setString(1, q.getDefisId());
                 p.setInt(2, q.getQuestionNum() );
@@ -158,9 +161,9 @@ public class QuestionsCRUD {
     public Questions update(@PathVariable(value="defisId") String id, @PathVariable(value="questionsNum") int Qid, @RequestBody Questions q, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-           
+            ResultSet rs = stmt.executeQuery("SELECT * FROM questions where defisid = '" + id + "' and questionNum = " + Qid );
             // Une erreur 404 si l'identifiant de la question ne correspond pas à  celui d'une question dans la base.
-            if(read(id, Qid, response) == null) {
+            if( ! (rs.next()) ) {
                 System.out.println("Question does not exist : " + id );
                 response.setStatus(404);
                 return null;

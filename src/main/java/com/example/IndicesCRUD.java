@@ -117,8 +117,9 @@ public class IndicesCRUD {
                 response.setStatus(412);
                 return null;
             }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM indices where defisId = '" + id + "' and indiceNum = "+indiceNum );
              //une erreur 403 si un existe déjà avec le même identifiant
-            if(read(id, indiceNum, response) == null) {
+            if(! (rs.next()) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO indices (defisid, indicenum, description, points) values (?,?,?,?)");
                 p.setString(1, i.getDefisId());
                 p.setInt(2, i.getIndiceNum() );
@@ -152,9 +153,11 @@ public class IndicesCRUD {
     public Indices update(@PathVariable(value="defisId") String id, @PathVariable(value="indiceNum") int indiceNum, @RequestBody Indices i, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM indices where defisId = '" + id + "' and indiceNum = "+indiceNum );
             
             // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
-            if(read(id, indiceNum, response) == null) {
+            if(! (rs.next()) ) {
                 System.out.println("Indices does not exist : " + indiceNum + "for defi : " + id );
                 response.setStatus(404);
                 return null;

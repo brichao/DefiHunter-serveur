@@ -120,8 +120,9 @@ public class ChamisCRUD {
                 response.setStatus(412);
                 return null;
             }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM chamis where pseudo = '" + id + "'");
              //une erreur 403 si un chamis existe déjà avec le même identifiant
-            if(read(id,response) == null) {
+            if(!(rs.next()) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO Chamis values (?,?,?,?,?)");
                 p.setString(1, u.getPseudo());
                 p.setString(2, u.getEmail() );

@@ -133,13 +133,10 @@ public class DefisCRUD {
                 return null;
             }
 
+            ResultSet rs = stmt.executeQuery("SELECT * FROM defis where defisid = '" + id + "'");
+
             //une erreur 403 si une ressource existe déjà avec le même identifiant
-            if(read(id,response) == null) {
-                /*
-               int rs = stmt.executeUpdate( "INSERT INTO defis values ('"+ d.getId() + "', '" + d.getTitre() + "','"+d.getNomType()+"',now(), now(), '" 
-                                            + d.getAuteur() + "','"+d.getCodeArret()+"', "+ d.getPoints() + ", " + d.getDuree() + ",'"+d.getPrologue()+"', '"   
-                                            + d.getEpilogue() + "', '"+d.getCommentaire()+"'  )" );
-                */
+            if(!( rs.next() ) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO defis values (?,?,?, now(), now(), ?,?,?,?,?,?,?)");
                 p.setString(1, d.getId());
                 p.setString(2, d.getTitre() );
@@ -186,9 +183,9 @@ public class DefisCRUD {
                 response.setStatus(412);
                 return null;
             }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM defis where defisid = '" + id + "'");
 
-            //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base           
-            if(!(read(id,response)== null)) {
+            if(( rs.next() ) ) {
                PreparedStatement p = connection.prepareStatement("UPDATE defis SET defisid = ?, titre= ?, nomType= ?, dateModification= now(),"+
                                                 "auteur = ?, codeArret=?, points=?, duree=?, prologue=?, epilogue=?, commentaire=? WHERE defisid = '"+id+"'");
 
@@ -232,7 +229,7 @@ public class DefisCRUD {
             if(!(read(id,response)== null)) {
                 int rs = stmt.executeUpdate("DELETE FROM defis WHERE defisid = '"+id+"'");
 
-            //une erreur 404 si l'identifiant de defis  ne correspond pas à un defis dans la base       
+            //une erreur 404 si l'identifiant de defis n'existe pas      
             }else {
                 System.out.println("Defis does not exist : " + id );
                 response.setStatus(404);

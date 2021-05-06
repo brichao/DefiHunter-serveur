@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 //indique que le contrôleur accepte les requêtes provenant d'une source quelconque (et donc pas nécessairement le même serveur). 
 @CrossOrigin
 // Indique que les ressources HTTP qui seront déclarées dans la classe seront toutes préfixées par /api/users.
-@RequestMapping("/api/defis")
+@RequestMapping("/api/defis/blocstexte")
 public class BlocsTexteCRUD {
     //@Autowired permet au Framework Spring de résoudre et injecter le Bean qui gère la connexion à la base de donnée
     @Autowired
@@ -35,7 +35,7 @@ public class BlocsTexteCRUD {
 
     
     //READ ALL -- GET
-    @GetMapping("/blocstexte")
+    @GetMapping("/")
     public ArrayList<BlocsTexte> allBlocsTextes(HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
@@ -67,8 +67,8 @@ public class BlocsTexteCRUD {
 
 
     //READ -- GET 
-    @GetMapping("/{defisIs}/blocstexte¨/{blocsTexteId}")
-    public BlocsTexte read(@PathVariable(value="defisIs") String id, HttpServletResponse response) {
+    @GetMapping("/{blocsTexteId}")
+    public BlocsTexte read(@PathVariable(value="defisIs") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM blocsTexte where blocsTexteId = " +id);
@@ -110,18 +110,20 @@ public class BlocsTexteCRUD {
 
     //CREATE -- POST 
     @PostMapping("/{blocsTexteId}")
-    public BlocsTexte create(@PathVariable(value="blocsTexteId") String id, @RequestBody BlocsTexte b, HttpServletResponse response){
+    public BlocsTexte create(@PathVariable(value="blocsTexteId") int id, @RequestBody BlocsTexte b, HttpServletResponse response){
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             
+            
             //une erreur 412 si l'identifiant de defis  dans l'URL n'est pas le même que celui du l'indice dans le corp de la requête.
-            if( Integer.parseInt(id) != b.getBlocsTexteId() ) {
+            if( id != b.getBlocsTexteId() ) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + b.getBlocsTexteId());
                 response.setStatus(412);
                 return null;
             }
+            ResultSet rs = stmt.executeQuery("SELECT * FROM blocsTexte where blocsTexteId = " +id);
              //une erreur 403 si un cexiste déjà avec le même identifiant
-            if(read(id,response) == null) {
+            if(! (rs.next()) ) {
                 PreparedStatement p = connection.prepareStatement("INSERT INTO BlocsTexte values (?,?,?,?,?)");
                 p.setInt(1, b.getBlocsTexteId());
                 p.setInt(2, b.getQuestionsId() );
@@ -152,10 +154,9 @@ public class BlocsTexteCRUD {
     
     //UPDATE -- PUT 
     @PutMapping("/{blocsTexteId}")
-    public BlocsTexte update(@PathVariable(value="blocsTexteId") String id, @RequestBody BlocsTexte b, HttpServletResponse response) {
+    public BlocsTexte update(@PathVariable(value="blocsTexteId") int id, @RequestBody BlocsTexte b, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
-           
             // Une erreur 404 si l'identifiant de defis ne correspond pas à  celui d'un indice dans la base.
             if(b.getBlocsTexteId() == 0) {
                 System.out.println("Texte does not exist : " + id );
@@ -163,7 +164,7 @@ public class BlocsTexteCRUD {
                 return null;
 
             //une erreur 412 si l'identifiant du User dans l'URL n'est pas le même que celui du User dans le corp de la requête.
-            }else if( Integer.parseInt(id) != b.getBlocsTexteId()) {
+            }else if( id != b.getBlocsTexteId()) {
                 System.out.println("Request Body not equivanlent to variable path : " + id + "!=" + b.getBlocsTexteId());
                 response.setStatus(412);
                 return null;
@@ -196,7 +197,7 @@ public class BlocsTexteCRUD {
         
     //DELETE -- DELETE
     @DeleteMapping("/{blocsTexteId}")
-    public void delete(@PathVariable(value="blocsTexteId") String id, HttpServletResponse response) {
+    public void delete(@PathVariable(value="blocsTexteId") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             int rs = stmt.executeUpdate("DELETE FROM blocsTexte WHERE blocsTexteId = '"+id+"'");

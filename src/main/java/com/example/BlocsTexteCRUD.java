@@ -46,7 +46,7 @@ public class BlocsTexteCRUD {
                 BlocsTexte b = new BlocsTexte();
                 b.setBlocsTexteId(rs.getInt("blocstexteid"));
                 b.setQuestionsId(rs.getInt("questionsid"));
-                b.setIndiceId(rs.getInt("indiceid"));
+                b.setIndiceId(rs.getInt("indicesid"));
                 b.setTexte(rs.getString("texte"));
                 b.setDefisId(rs.getString("defisid"));
                 L.add(b);
@@ -68,7 +68,7 @@ public class BlocsTexteCRUD {
 
     //READ -- GET 
     @GetMapping("/{blocsTexteId}")
-    public BlocsTexte read(@PathVariable(value="defisIs") int id, HttpServletResponse response) {
+    public BlocsTexte read(@PathVariable(value="blocsTexteId") int id, HttpServletResponse response) {
         try (Connection connection = dataSource.getConnection()) {
             Statement stmt = connection.createStatement(); 
             ResultSet rs = stmt.executeQuery("SELECT * FROM blocsTexte where blocsTexteId = " +id);
@@ -77,7 +77,7 @@ public class BlocsTexteCRUD {
             while (rs.next()) {
                 b.setBlocsTexteId(rs.getInt("blocstexteid"));
                 b.setQuestionsId(rs.getInt("questionsid"));
-                b.setIndiceId(rs.getInt("indiceid"));
+                b.setIndiceId(rs.getInt("indicesid"));
                 b.setTexte(rs.getString("texte"));
                 b.setDefisId(rs.getString("defisid"));
                 

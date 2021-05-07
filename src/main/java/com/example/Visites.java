@@ -9,6 +9,7 @@ public class Visites {
     private String visiteur; 
     private Timestamp dateVisite;  
     private String modeDP; 
+    private int notation;
     private int score;   
     private int temps;
     private String status;
@@ -33,6 +34,10 @@ public class Visites {
 
     public String getModeDP() {
         return modeDP;
+    }
+
+    public int getNotation() {
+        return notation;
     }
 
     public int getScore() {
@@ -68,6 +73,10 @@ public class Visites {
 
     public void setModeDP(String modeDP) {
         this.modeDP = modeDP;
+    }
+
+    public void setNotation(int notation) {
+        this.notation = notation;
     }
 
     public void setScore(int score) {

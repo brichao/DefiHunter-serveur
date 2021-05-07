@@ -85,6 +85,7 @@ public class VisitesCRUD {
                 v.setVisiteur(rs.getString("visiteur")); 
                 v.setDateVisite(rs.getTimestamp("datevisite"));
                 v.setModeDP(rs.getString("modedp"));
+                v.setNotation(rs.getInt("notation"));
                 v.setScore(rs.getInt("score"));
                 v.setTemps(rs.getInt("temps"));
                 v.setStatus(rs.getString("status"));
@@ -131,15 +132,16 @@ public class VisitesCRUD {
 
             //une erreur 403 si une ressource existe déjà avec le même identifiant
             if(!( rs.next() ) ) {
-                PreparedStatement p = connection.prepareStatement("INSERT INTO visites values (?,?,?, now(), ?,?,?,?,?)");
+                PreparedStatement p = connection.prepareStatement("INSERT INTO visites values (?,?,?, now(), ?, ?,?,?,?,?)");
                 p.setString(1, v.getVisiteId());
                 p.setString(2, v.getDefisId() );
                 p.setString(3, v.getVisiteur() );
                 p.setString(4, v.getModeDP() );
-                p.setInt(5, v.getScore() );
-                p.setInt(6, v.getTemps() );
-                p.setString(7, v.getStatus() );
-                p.setString(8, v.getCommentaire() );
+                p.setInt(5, v.getNotation() );
+                p.setInt(6, v.getScore() );
+                p.setInt(7, v.getTemps() );
+                p.setString(8, v.getStatus() );
+                p.setString(9, v.getCommentaire() );
                 p.executeUpdate();
                 Visites inseree = this.read(id, response);
             
@@ -179,16 +181,17 @@ public class VisitesCRUD {
 
             if(( rs.next() ) ) {
                PreparedStatement p = connection.prepareStatement("UPDATE visites SET visitesid = ?, defisid= ?, visiteur= ?, "+
-                                                "modedp = ?, score=?, temps=?, status=?, commentaire=? WHERE visitesid = '"+id+"'");
+                                                "modedp = ?, notation=?, score=?, temps=?, status=?, commentaire=? WHERE visitesid = '"+id+"'");
 
                 p.setString(1, v.getVisiteId());
                 p.setString(2, v.getDefisId() );
                 p.setString(3, v.getVisiteur() );
                 p.setString(4, v.getModeDP() );
-                p.setInt(5, v.getScore() );
-                p.setInt(6, v.getTemps() );
-                p.setString(7, v.getStatus() );
-                p.setString(8, v.getCommentaire() );
+                p.setInt(5, v.getNotation() );
+                p.setInt(6, v.getScore() );
+                p.setInt(7, v.getTemps() );
+                p.setString(8, v.getStatus() );
+                p.setString(9, v.getCommentaire() );
                 p.executeUpdate();
                 Visites inseree = this.read(id, response);
                 return inseree;

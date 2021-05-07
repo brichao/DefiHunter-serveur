@@ -43,16 +43,16 @@ insert into arrets values ('SEM_GENGREHOTEL', 'GRENOBLE HÔTEL DE VILLE', 'https
 insert into arrets values ('SEM_GENVICTHUGO', 'VICTOR HUGO', 'https://www.google.com/maps/@45.1898119,5.7250558,3a,75y,327.55h,83.64t/data=!3m6!1e1!3m4!1sD3q07wHDE23LN4vLFEYPjQ!2e0!7i13312!8i6656');
 
 --LesDefis
-insert into defis values ('D127' ,'Le Mechoui', 'Enigme', '2021-03-15 16:03:01', '2021-03-15 16:03:01', 'carobis', 'SEM_GENDUBEDOUT', 16, 20, 'Pour le présentiel regarder la vidéo avant d''aller sur place.','
-- Sheepest dit à propos de ses moutons :\
-- "Quand j’ai eu l’idée de faire des moutons je ne savais pas comment j’allais dessiner les dessiner."
+insert into defis values ('D127' ,'Le Mechoui', 'Enigme', '2021-03-15 16:03:01', '2021-03-15 16:03:01', 'carobis', 'SEM_GENDUBEDOUT', 16, 20, '','
+- Sheepest dit à propos de ses moutons :\         
+- "Quand j’ai eu l’idée de faire des moutons je ne savais pas comment j’allais dessiner les dessiner."    
 - "C’est en feuilletant un magazine que j’ai trouvé la tête du mouton propre à une marque de skate peu connue des années 90."
 ', '
 - La première version était ennuyeuse :\ premier mouton trouvé immédiatement (1mn max)
 - La version 2 ajoute deux moutons dont un à découvrir avec une petite vidéo 3mn.
 ');
 
-insert into defis values ('D128' ,'Escape Game - Street Art', 'Enigme', '2021-04-03 22:42:00', '2021-04-03 22:42:00', 'carobis', 'SEM_GENCHAVANT', 45, 2.5, '
+insert into defis values ('D128' ,'Escape Game - Street Art', 'Enigme', '2021-04-03 22:42:00', '2021-04-03 22:42:00', 'carobis', 'SEM_GENCHAVANT', 45, 150, '
 - Possible uniquement en présentiel. ~ 2h30
 - Télécharge l''application "Graaly" sur ton téléphone portable.
 - Cette application est indispensable pour jouer.
@@ -134,9 +134,7 @@ insert into indices (defisid, indicenum , description , points ) values ('D151',
 insert into indices (defisid, indicenum , description , points ) values ('D189', 1, '- Tu fumes ? Regarde où tu peux acheter des cigarettes.
         - Maintenant sans bouger regarde à droite en haut.
         - Les cheminées ne fument pas. Mais le mouton te regarde..', 4);
-
-
-
+       
 --LesQuestions
 insert into questions (defisid, questionnum , description , points, secret) values ('D127', 1, 'Quel numéro ?', 1, '26');
 insert into questions (defisid, questionnum , description , points, secret) values ('D127', 2, 'Quelle est la couleur qui est juste sous le museau du mouton ?', 4, 'blanc');
@@ -145,15 +143,12 @@ insert into questions (defisid, questionnum , description , points, secret) valu
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 1, '- Qu''a le renard entre les deux yeux ?', 3, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 2, '- Qu''y a t il à coté du troupeau de mouton ?', 2, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D128', 3, '- Quel outil a-t-il été emprunté à un artiste par un autre artiste ?', 40, '');
-insert into questions (defisid, questionnum , description , points, secret) values ('D145', 1, '-Combien de boucles sous son cou ?', 5, '');
-insert into questions (defisid, questionnum , description , points, secret) values ('D151', 1, '-Quelle est la première lettre du nom de la rue dans laquelle sont les moutons ?', 1, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D145', 1, 'Combien de boucles sous son cou ?', 5, '');
+insert into questions (defisid, questionnum , description , points, secret) values ('D151', 1, 'Quelle est la première lettre du nom de la rue dans laquelle sont les moutons ?', 1, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D189', 1, '- Quel est le nom du magazin sous le mouton ?', 4, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D189', 2, '- Combien y-a-t''il de chamois ?', 4, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D189', 3, '- Combien y-a-t''il d''éléphants ?', 4, '');
 insert into questions (defisid, questionnum , description , points, secret) values ('D189', 4, '- Combien y-a-t''il d''écureuils (compter uniquement les tout plats) ?', 4, '');
-
-
-
 
 --LesBlocsTexte
 insert into blocstexte (indicesid, texte, defisid) values (1,'- Une amie t''a demandé de préparer un grand méchoui pour 120 personnes.
@@ -188,13 +183,13 @@ insert into blocstexte (indicesid, texte, defisid) values (6,'- Les oranges te d
 - Reste sur le parking pour te recharger les piles.','D145');
 insert into blocstexte (indicesid, texte, defisid) values (7,'','D145');
 insert into blocstexte (questionsid, texte, defisid) values (8,'- Cherche celui qui pourrait te donner matière à te protéger pendant l''hiver.
-- Il est là. Il te regarde de haut. Il t''observe.
-- Il bêle. "Je suis ceux que je suis. Et le vert, je le mange !"','D145');
-
+  - Il est là. Il te regarde de haut. Il t''observe.
+  - Il bêle. "Je suis ceux que je suis. Et le vert, je le mange !"','D145');
 insert into blocstexte (indicesid, texte, defisid) values (8,'Il tourne en rond pour le plaisir des petits. Cherche le.','D151');
-insert into blocstexte (questionsid, texte, defisid) values (9,'- Si il n''y est pas, demande à quelqu''un où il est, quand il y est :-)
-- Cherche les deux moutons.. Cherche le.','D151');
-insert into blocstexte (indicesid, texte, defisid) values (9,' - Arrivé.e à l''arrêt victor hugo ?
+insert into blocstexte (questionsid, texte, defisid) values (9,'Si il n''y est pas, demande à quelqu''un où il est, quand il y est :-)    Cherche les deux moutons.','D151');
+insert into blocstexte (texte, defisid) values ('Fais toi un selfie avec les 2 moutons en utilisant ton sens de la créativité.
+  - Si tu n''y arrives pas demande à quelqu''un qu''il/elle te tire un portrait.','D151');
+ insert into blocstexte (indicesid, texte, defisid) values (9,' - Arrivé.e à l''arrêt victor hugo ?
 - Peut être as tu besoin d''argent ? Mets toi du coté de la banque.
 - Un mouton te regarde ! Regarde le...','D189');
 insert into blocstexte (questionsid, texte, defisid) values (10,'- Tu as vu le mouton ?','D189');
@@ -205,10 +200,11 @@ insert into blocstexte (questionsid, texte, defisid) values (12,'- Fait attentio
 - Ils sont pas très loin.','D189');
 insert into blocstexte (questionsid, texte, defisid) values (13,'- Tout à l''heure il y avait des écureils. Tu as vu ?','D189');
 
+--LesVisites
+insert into visites values ('V127', 'D127', 'nomoldu', '2021-04-10 18:03:01', 'présentiel', 3, 8, 'Répondu', '- Il pleuvait des cordes. Je me suis mis du mauvais coté de l''arrêt.
+  - J''ai pris le premier indice.
+  - Après évidemment de l''autre coté c''est plus facile.
+  - En fait je trouve qu''il est un peu trop facile => j''ai mis 3 étoiles.');
 
-
-
-
-
-
-
+ 
+ 

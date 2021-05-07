@@ -6,6 +6,7 @@ DROP TABLE IF exists public.arrets cascade;
 DROP TABLE IF exists public.chamis cascade;
 DROP TABLE IF exists public.blocstexte cascade;
 DROP TABLE IF exists public.motscles cascade;
+DROP TABLE IF exists public.visites cascade;
 
 
 create table chamis (
@@ -80,6 +81,21 @@ create table motscles (
 	motcle varchar,
 	CONSTRAINT motscles_pk PRIMARY KEY (defisid, motcle),
 	CONSTRAINT motscles_fk FOREIGN KEY (defisid) REFERENCES defis(defisid)
+);
+
+CREATE TABLE visites (
+	visitesid VARCHAR,
+	defisid VARCHAR,
+	visiteur VARCHAR,
+	datevisite TIMESTAMP,
+	modeDP VARCHAR,
+	score INTEGER,
+	temps INTEGER,
+	status VARCHAR,
+	commentaire VARCHAR,
+	CONSTRAINT visite_pk PRIMARY KEY (visitesid),
+	CONSTRAINT visite_fk1 FOREIGN KEY (defisid) REFERENCES defis(defisid),
+	CONSTRAINT visite_fk2 FOREIGN KEY (visiteur) REFERENCES chamis(pseudo)
 );
 
 
